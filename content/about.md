@@ -11,10 +11,10 @@ I'm an FPGA engineer with 5+ years of experience building high-performance digit
 
 My work spans **medical devices**, **big tech infrastructure**, and **custom silicon** projects. I specialize in:
 
-- **Streaming systems** — High-throughput data pipelines and DMA engines
-- **SerDes integration** — Multi-gigabit serial links (PCIe, Ethernet, custom)
-- **Verification automation** — Cocotb frameworks, SVA, constrained random
-- **Timing closure** — Clock domain crossings, multicycle paths, physical optimization
+- **Streaming systems** - High-throughput data pipelines and DMA engines
+- **SerDes integration** - Multi-gigabit serial links (PCIe, Ethernet, custom)
+- **Verification automation** - Cocotb frameworks, SVA, constrained random
+- **Timing closure** - Clock domain crossings, multicycle paths, physical optimization
 
 ### Focus Areas
 
@@ -35,9 +35,9 @@ My work spans **medical devices**, **big tech infrastructure**, and **custom sil
 
 I believe in:
 - **Readable code** over clever code
-- **Assertions everywhere** — if it can go wrong, check it
-- **Automation** — if you do it twice, script it
-- **Documentation** — but not too much
+- **Assertions everywhere** - if it can go wrong, check it
+- **Automation** - if you do it twice, script it
+- **Documentation** - but not too much
 
 ### This Site
 

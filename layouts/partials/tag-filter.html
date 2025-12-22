@@ -1,0 +1,82 @@
+{{/* Tag filter partial - client-side filtering */}}
+{{ $pages := .Pages }}
+{{ $allTags := slice }}
+{{ range $pages }}
+  {{ with .Params.tags }}
+    {{ range . }}
+      {{ $allTags = $allTags | append . }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ $uniqueTags := uniq $allTags | sort }}
+
+{{ if gt (len $uniqueTags) 0 }}
+<div class="tag-filter">
+  <span class="tag-filter-label">Filter by tag:</span>
+  <button class="tag-btn active" data-tag="all">All</button>
+  {{ range $uniqueTags }}
+  <button class="tag-btn" data-tag="{{ . | urlize }}">{{ . }}</button>
+  {{ end }}
+</div>
+
+<style>
+.tag-filter {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.tag-filter-label {
+  margin-right: 0.5rem;
+  opacity: 0.7;
+}
+.tag-btn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+.tag-btn:hover,
+.tag-btn.active {
+  background: var(--accent);
+  color: var(--background);
+}
+.post-item.hidden {
+  display: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const tagBtns = document.querySelectorAll('.tag-btn');
+  const posts = document.querySelectorAll('.post-item');
+
+  tagBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const tag = this.dataset.tag;
+
+      tagBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+
+      posts.forEach(post => {
+        if (tag === 'all') {
+          post.classList.remove('hidden');
+        } else {
+          const postTags = post.dataset.tags ? post.dataset.tags.split(',') : [];
+          if (postTags.includes(tag)) {
+            post.classList.remove('hidden');
+          } else {
+            post.classList.add('hidden');
+          }
+        }
+      });
+    });
+  });
+});
+</script>
+{{ end }}

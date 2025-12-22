@@ -1,0 +1,96 @@
+{{/* Project card partial with status badge and metrics */}}
+{{ $tags := slice }}
+{{ range .Params.tags }}
+  {{ $tags = $tags | append (. | urlize) }}
+{{ end }}
+<article class="post on-list post-item" data-tags="{{ delimit $tags "," }}">
+  <div class="project-header">
+    <h2 class="post-title">
+      <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>
+    </h2>
+    {{ with .Params.status }}
+    <span class="status-badge status-{{ . | urlize }}">{{ . }}</span>
+    {{ end }}
+  </div>
+
+  <div class="post-meta">
+    {{- if .Date -}}
+      <time class="post-date">
+        {{- partial "post-date" . -}}
+      </time>
+    {{- end -}}
+  </div>
+
+  {{ with .Params.metrics }}
+  <div class="project-metrics">
+    {{ with .fmax_mhz }}{{ if gt . 0 }}<span class="metric"><strong>Fmax:</strong> {{ . }} MHz</span>{{ end }}{{ end }}
+    {{ with .throughput }}{{ if . }}<span class="metric"><strong>Throughput:</strong> {{ . }}</span>{{ end }}{{ end }}
+    {{ with .resources_summary }}{{ if . }}<span class="metric"><strong>Resources:</strong> {{ . }}</span>{{ end }}{{ end }}
+  </div>
+  {{ end }}
+
+  {{ if .Params.tags }}
+    <span class="post-tags">
+      {{ range .Params.tags }}
+      #<a href="{{ (urlize (printf "tags/%s/" . )) | absLangURL }}">
+        {{- . -}}
+      </a>&nbsp;
+      {{ end }}
+    </span>
+  {{ end }}
+
+  <div class="post-content">
+    {{ if .Params.summary }}
+      <p>{{ .Params.summary | markdownify }}</p>
+    {{ else if .Description }}
+      <p>{{ .Description | markdownify }}</p>
+    {{ else }}
+      {{ .Summary }}
+    {{ end }}
+  </div>
+
+  <div>
+    <a class="read-more button inline" href="{{ .RelPermalink }}">View Project</a>
+  </div>
+</article>
+
+<style>
+.project-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.status-shipped {
+  background: #2d5a27;
+  color: #90EE90;
+}
+.status-in-progress {
+  background: #5a4a27;
+  color: #FFD700;
+}
+.status-archived {
+  background: #3a3a3a;
+  color: #999;
+}
+.project-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+  opacity: 0.85;
+}
+.metric {
+  background: rgba(255,255,255,0.05);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+}
+</style>

@@ -1,0 +1,78 @@
+{{ define "main" }}
+  {{ with .Content }}
+    <div class="index-content">
+      {{ . }}
+    </div>
+  {{ end }}
+
+  {{ partial "tag-filter.html" . }}
+
+  <div class="posts">
+    {{ range .Paginator.Pages }}
+      {{ $tags := slice }}
+      {{ range .Params.tags }}
+        {{ $tags = $tags | append (. | urlize) }}
+      {{ end }}
+      <article class="post on-list post-item" data-tags="{{ delimit $tags "," }}">
+        <h2 class="post-title">
+          <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>
+        </h2>
+        <div class="post-meta">
+          {{- if .Date -}}
+            <time class="post-date">
+              {{- partial "post-date" . -}}
+            </time>
+          {{- end -}}
+        </div>
+
+        {{ if .Params.tags }}
+          <span class="post-tags">
+            {{ range .Params.tags }}
+            #<a href="{{ (urlize (printf "tags/%s/" . )) | absLangURL }}">
+              {{- . -}}
+            </a>&nbsp;
+            {{ end }}
+          </span>
+        {{ end }}
+
+        {{ with .Params.files }}
+        <div class="resource-files">
+          <strong>Downloads:</strong>
+          {{ range . }}
+          <a href="{{ . }}" class="resource-link">{{ path.Base . }}</a>
+          {{ end }}
+        </div>
+        {{ end }}
+
+        <div class="post-content">
+          {{ if .Params.summary }}
+            <p>{{ .Params.summary | markdownify }}</p>
+          {{ else if .Description }}
+            <p>{{ .Description | markdownify }}</p>
+          {{ else }}
+            {{ .Summary }}
+          {{ end }}
+        </div>
+
+        <div>
+          <a class="read-more button inline" href="{{ .RelPermalink }}">View Details</a>
+        </div>
+      </article>
+    {{ end }}
+
+    {{ partial "pagination.html" . }}
+  </div>
+
+  <style>
+  .resource-files {
+    margin: 0.5rem 0;
+  }
+  .resource-link {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+  }
+  </style>
+{{ end }}

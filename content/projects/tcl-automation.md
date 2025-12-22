@@ -1,10 +1,16 @@
 ---
 title: "TCL Automation Toolkit"
+slug: "tcl-automation"
 date: 2024-12-15
 draft: false
-description: "Vivado/Quartus automation scripts for FPGA workflows"
+summary: "Collection of TCL scripts for automating FPGA builds, timing analysis, and constraint generation"
 tags: ["TCL", "automation", "Vivado", "Quartus", "scripting"]
-categories: ["projects"]
+status: "Shipped"
+repo_url: ""
+metrics:
+  fmax_mhz: 0
+  throughput: ""
+  resources_summary: ""
 ---
 
 ## Overview

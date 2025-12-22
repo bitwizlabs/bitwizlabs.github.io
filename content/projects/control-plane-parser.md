@@ -1,10 +1,16 @@
 ---
 title: "Control-Plane Message Parser FSM"
+slug: "control-plane-parser"
 date: 2025-01-05
 draft: false
-description: "Hardware FSM for parsing control-plane protocol messages"
+summary: "Single-cycle hardware FSM for parsing control-plane messages with zero-copy field extraction"
 tags: ["FSM", "parser", "control-plane", "protocol"]
-categories: ["projects"]
+status: "Shipped"
+repo_url: ""
+metrics:
+  fmax_mhz: 400
+  throughput: "200 Gbps"
+  resources_summary: "2K LUT, 1K FF"
 ---
 
 ## Overview

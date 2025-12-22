@@ -1,0 +1,89 @@
+{{ define "main" }}
+  {{ with .Content }}
+    <div class="index-content">
+      {{ . }}
+    </div>
+  {{ end }}
+
+  {{ partial "tag-filter.html" . }}
+
+  <div class="posts">
+    {{ range .Paginator.Pages }}
+      {{ $tags := slice }}
+      {{ range .Params.tags }}
+        {{ $tags = $tags | append (. | urlize) }}
+      {{ end }}
+      <article class="post on-list post-item" data-tags="{{ delimit $tags "," }}">
+        <div class="article-header">
+          <h2 class="post-title">
+            <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>
+          </h2>
+          {{ with .Params.difficulty }}
+          <span class="difficulty-badge difficulty-{{ . | urlize }}">{{ . }}</span>
+          {{ end }}
+        </div>
+        <div class="post-meta">
+          {{- if .Date -}}
+            <time class="post-date">
+              {{- partial "post-date" . -}}
+            </time>
+          {{- end -}}
+        </div>
+
+        {{ if .Params.tags }}
+          <span class="post-tags">
+            {{ range .Params.tags }}
+            #<a href="{{ (urlize (printf "tags/%s/" . )) | absLangURL }}">
+              {{- . -}}
+            </a>&nbsp;
+            {{ end }}
+          </span>
+        {{ end }}
+
+        <div class="post-content">
+          {{ if .Params.summary }}
+            <p>{{ .Params.summary | markdownify }}</p>
+          {{ else if .Description }}
+            <p>{{ .Description | markdownify }}</p>
+          {{ else }}
+            {{ .Summary }}
+          {{ end }}
+        </div>
+
+        <div>
+          <a class="read-more button inline" href="{{ .RelPermalink }}">Read More</a>
+        </div>
+      </article>
+    {{ end }}
+
+    {{ partial "pagination.html" . }}
+  </div>
+
+  <style>
+  .article-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .difficulty-badge {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  .difficulty-beginner {
+    background: #2d5a27;
+    color: #90EE90;
+  }
+  .difficulty-intermediate {
+    background: #5a4a27;
+    color: #FFD700;
+  }
+  .difficulty-advanced {
+    background: #5a2727;
+    color: #FF6B6B;
+  }
+  </style>
+{{ end }}

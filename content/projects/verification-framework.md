@@ -1,10 +1,16 @@
 ---
 title: "Verification Framework (Cocotb/SVA)"
+slug: "verification-framework"
 date: 2024-12-20
 draft: false
-description: "Python-based verification with SystemVerilog Assertions"
+summary: "Hybrid verification framework combining Python Cocotb testbenches with SVA for comprehensive RTL verification"
 tags: ["verification", "Cocotb", "SVA", "testbench", "Python"]
-categories: ["projects"]
+status: "Shipped"
+repo_url: ""
+metrics:
+  fmax_mhz: 0
+  throughput: ""
+  resources_summary: ""
 ---
 
 ## Overview

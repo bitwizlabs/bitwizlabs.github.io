@@ -1,0 +1,17 @@
+{{ define "main" }}
+  {{ with .Content }}
+    <div class="index-content">
+      {{ . }}
+    </div>
+  {{ end }}
+
+  {{ partial "tag-filter.html" . }}
+
+  <div class="posts">
+    {{ range .Paginator.Pages }}
+      {{ partial "project-card.html" . }}
+    {{ end }}
+
+    {{ partial "pagination.html" . }}
+  </div>
+{{ end }}

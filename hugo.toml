@@ -11,7 +11,7 @@ theme = "hugo-theme-terminal"
 [params]
   # Terminal theme settings
   themeColor = "green"
-  showMenuItems = 4
+  showMenuItems = 6
   fullWidthTheme = false
   centerTheme = true
 
@@ -35,27 +35,45 @@ theme = "hugo-theme-terminal"
   logoHomeLink = "/"
 
 # Main menu
+# Note: Resources omitted from nav by default (route still exists at /resources/)
+# To add Resources to nav when content exists, uncomment the menu entry below
 [menu]
   [[menu.main]]
-    identifier = "projects"
-    name = "projects"
-    url = "/projects/"
+    identifier = "start-here"
+    name = "Start Here"
+    url = "/start-here/"
     weight = 1
   [[menu.main]]
-    identifier = "articles"
-    name = "articles"
-    url = "/articles/"
+    identifier = "projects"
+    name = "Projects"
+    url = "/projects/"
     weight = 2
   [[menu.main]]
-    identifier = "resources"
-    name = "resources"
-    url = "/resources/"
+    identifier = "lab-notes"
+    name = "Lab Notes"
+    url = "/lab-notes/"
     weight = 3
   [[menu.main]]
-    identifier = "about"
-    name = "about"
-    url = "/about/"
+    identifier = "articles"
+    name = "Articles"
+    url = "/articles/"
     weight = 4
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 5
+  [[menu.main]]
+    identifier = "now"
+    name = "Now"
+    url = "/now/"
+    weight = 6
+  # Uncomment when real resource files exist:
+  # [[menu.main]]
+  #   identifier = "resources"
+  #   name = "Resources"
+  #   url = "/resources/"
+  #   weight = 7
 
 # Syntax highlighting configuration
 [markup]

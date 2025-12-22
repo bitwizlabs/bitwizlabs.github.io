@@ -1,10 +1,16 @@
 ---
 title: "SerDes Integration (64b/66b)"
+slug: "serdes-integration"
 date: 2025-01-10
 draft: false
-description: "High-speed serial link implementation with 64b/66b encoding"
+summary: "High-speed serial transceiver integration using Xilinx GTY at 25.78125 Gbps with 64b/66b encoding"
 tags: ["SerDes", "64b/66b", "GTY", "high-speed"]
-categories: ["projects"]
+status: "Shipped"
+repo_url: ""
+metrics:
+  fmax_mhz: 322
+  throughput: "25 Gbps"
+  resources_summary: "4K LUT, 6K FF, 1 GTY"
 ---
 
 ## Overview

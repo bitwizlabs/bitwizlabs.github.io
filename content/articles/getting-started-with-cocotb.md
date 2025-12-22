@@ -1,10 +1,11 @@
 ---
 title: "Getting Started with Cocotb for FPGA Verification"
+slug: "getting-started-with-cocotb"
 date: 2025-01-20
 draft: false
-description: "A practical introduction to Python-based RTL verification"
+summary: "A practical introduction to Python-based RTL verification using Cocotb"
 tags: ["verification", "Cocotb", "Python", "testbench"]
-categories: ["articles"]
+difficulty: "Beginner"
 ---
 
 ## Why Cocotb?

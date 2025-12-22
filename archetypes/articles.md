@@ -1,23 +1,24 @@
 ---
 title: "{{ replace .Name "-" " " | title }}"
+slug: "{{ .Name }}"
 date: {{ .Date }}
 draft: true
-description: ""
+summary: ""
 tags: []
-categories: ["articles"]
+difficulty: ""  # Beginner, Intermediate, Advanced (optional)
 ---
 
 ## Introduction
 
-Brief introduction to the topic.
+<!-- What is this article about? -->
 
-## Main Content
+## Main content
 
-Body of the article.
+<!-- The meat of the article -->
 
 ## Conclusion
 
-Summary and next steps.
+<!-- Summary and next steps -->
 
 ---
 

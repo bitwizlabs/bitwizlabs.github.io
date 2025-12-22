@@ -1,10 +1,16 @@
 ---
 title: "DDR4 Subsystem Architecture"
+slug: "ddr4-subsystem"
 date: 2025-01-15
 draft: false
-description: "Memory controller design patterns and AXI integration"
+summary: "Complete DDR4 memory subsystem for Xilinx UltraScale+ with custom AXI4 wrapper and burst optimization"
 tags: ["DDR4", "memory", "AXI", "FPGA"]
-categories: ["projects"]
+status: "Shipped"
+repo_url: ""
+metrics:
+  fmax_mhz: 300
+  throughput: "25.6 GB/s"
+  resources_summary: "8K LUT, 12K FF, 48 BRAM"
 ---
 
 ## Overview
