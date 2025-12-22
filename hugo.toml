@@ -3,8 +3,9 @@ languageCode = "en-us"
 title = "bitwizlabs"
 theme = "hugo-theme-terminal"
 
-# Pagination
-paginate = 10
+# Pagination (Hugo v0.128+ format)
+[pagination]
+  pagerSize = 10
 
 # Dark theme
 [params]
