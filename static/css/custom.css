@@ -1,0 +1,137 @@
+/* Custom styles for bitwizlabs */
+
+/* Syntax highlighting - Monokai-inspired for dark theme */
+.highlight pre {
+    background-color: #1a1a1a !important;
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+/* SystemVerilog/Verilog specific */
+.highlight .k,   /* Keyword */
+.highlight .kd,  /* Keyword declaration */
+.highlight .kn,  /* Keyword namespace */
+.highlight .kp,  /* Keyword pseudo */
+.highlight .kr,  /* Keyword reserved */
+.highlight .kt { /* Keyword type */
+    color: #f92672;
+}
+
+.highlight .n,   /* Name */
+.highlight .na,  /* Name attribute */
+.highlight .nb,  /* Name builtin */
+.highlight .nc,  /* Name class */
+.highlight .no,  /* Name constant */
+.highlight .nd,  /* Name decorator */
+.highlight .ni,  /* Name entity */
+.highlight .ne,  /* Name exception */
+.highlight .nf,  /* Name function */
+.highlight .nl,  /* Name label */
+.highlight .nn,  /* Name namespace */
+.highlight .nx,  /* Name other */
+.highlight .py,  /* Name property */
+.highlight .nt,  /* Name tag */
+.highlight .nv { /* Name variable */
+    color: #a6e22e;
+}
+
+.highlight .s,   /* String */
+.highlight .sa,  /* String affix */
+.highlight .sb,  /* String backtick */
+.highlight .sc,  /* String char */
+.highlight .dl,  /* String delimiter */
+.highlight .sd,  /* String doc */
+.highlight .s2,  /* String double */
+.highlight .se,  /* String escape */
+.highlight .sh,  /* String heredoc */
+.highlight .si,  /* String interpol */
+.highlight .sx,  /* String other */
+.highlight .sr,  /* String regex */
+.highlight .s1,  /* String single */
+.highlight .ss { /* String symbol */
+    color: #e6db74;
+}
+
+.highlight .m,   /* Number */
+.highlight .mb,  /* Number binary */
+.highlight .mf,  /* Number float */
+.highlight .mh,  /* Number hex */
+.highlight .mi,  /* Number integer */
+.highlight .il,  /* Number integer long */
+.highlight .mo,  /* Number octal */
+.highlight .mx { /* Number hex */
+    color: #ae81ff;
+}
+
+.highlight .c,   /* Comment */
+.highlight .ch,  /* Comment hashbang */
+.highlight .cm,  /* Comment multiline */
+.highlight .c1,  /* Comment single */
+.highlight .cs,  /* Comment special */
+.highlight .cp,  /* Comment preproc */
+.highlight .cpf { /* Comment preproc file */
+    color: #75715e;
+    font-style: italic;
+}
+
+.highlight .o,   /* Operator */
+.highlight .ow { /* Operator word */
+    color: #f92672;
+}
+
+.highlight .p { /* Punctuation */
+    color: #f8f8f2;
+}
+
+/* Code block language indicator */
+.highlight pre code::before {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+/* Make tables more readable */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+th, td {
+    border: 1px solid #333;
+    padding: 0.5rem 1rem;
+    text-align: left;
+}
+
+th {
+    background-color: #1a1a1a;
+}
+
+/* ASCII art diagrams */
+pre:not(.highlight pre) {
+    background-color: #0d0d0d;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    line-height: 1.4;
+}
+
+/* Blockquotes for taglines */
+blockquote {
+    border-left: 3px solid #00d4aa;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: #888;
+    font-style: italic;
+}
+
+/* Links */
+a {
+    color: #00d4aa;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

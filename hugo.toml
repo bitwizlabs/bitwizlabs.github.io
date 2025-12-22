@@ -1,0 +1,80 @@
+baseURL = "https://bitwiz.io/"
+languageCode = "en-us"
+title = "bitwizlabs"
+theme = "hugo-theme-terminal"
+
+# Pagination
+paginate = 10
+
+# Dark theme
+[params]
+  # Terminal theme settings
+  themeColor = "green"
+  showMenuItems = 4
+  fullWidthTheme = false
+  centerTheme = true
+
+  # Site info
+  author = "bitwiz"
+  description = "Digital logic design & FPGA-accelerated systems"
+  keywords = "FPGA, digital design, Verilog, SystemVerilog, VHDL, verification, SerDes"
+
+  # Footer
+  footerCopyright = "© 2025 bitwizlabs"
+
+  # Syntax highlighting
+  contentTypeName = "articles"
+  showLastUpdated = true
+
+  # Custom CSS
+  customCSS = ["/css/custom.css"]
+
+[params.logo]
+  logoText = "bitwizlabs"
+  logoHomeLink = "/"
+
+# Main menu
+[menu]
+  [[menu.main]]
+    identifier = "projects"
+    name = "projects"
+    url = "/projects/"
+    weight = 1
+  [[menu.main]]
+    identifier = "articles"
+    name = "articles"
+    url = "/articles/"
+    weight = 2
+  [[menu.main]]
+    identifier = "resources"
+    name = "resources"
+    url = "/resources/"
+    weight = 3
+  [[menu.main]]
+    identifier = "about"
+    name = "about"
+    url = "/about/"
+    weight = 4
+
+# Syntax highlighting configuration
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    noClasses = false
+    style = "monokai"
+    tabWidth = 4
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+# Output formats for GitHub Pages
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+
+# Taxonomies
+[taxonomies]
+  tag = "tags"
+  category = "categories"
