@@ -1,6 +1,6 @@
 baseURL = "https://bitwiz.io/"
 languageCode = "en-us"
-title = "bitwizlabs"
+title = "bitwiz"
 theme = "hugo-theme-terminal"
 
 # Pagination (Hugo v0.128+ format)
@@ -21,17 +21,14 @@ theme = "hugo-theme-terminal"
   keywords = "FPGA, digital design, Verilog, SystemVerilog, VHDL, verification, SerDes"
 
   # Footer
-  footerCopyright = "© 2025 bitwizlabs"
+  footerCopyright = "© 2025 bitwiz"
 
   # Syntax highlighting
   contentTypeName = "articles"
   showLastUpdated = true
 
-  # Custom CSS
-  customCSS = ["/css/custom.css"]
-
 [params.logo]
-  logoText = "bitwizlabs"
+  logoText = "bitwiz"
   logoHomeLink = "/"
 
 # Main menu

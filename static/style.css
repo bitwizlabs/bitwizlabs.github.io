@@ -379,3 +379,38 @@ th,
 button {
   font-weight: 600;
 }
+
+/* Latest section on homepage */
+
+.latest-section {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--accent);
+}
+
+.latest-section h2 {
+  margin-bottom: 15px;
+}
+
+.latest-section .post {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+}
+
+.latest-section .post-title {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+}
+
+.latest-section .post-title a {
+  text-decoration: none;
+}
+
+.latest-section .post-title a:hover {
+  text-decoration: underline;
+}
+
+.latest-section .post-meta {
+  font-size: 0.85em;
+  opacity: 0.7;
+}

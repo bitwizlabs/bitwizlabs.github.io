@@ -1,0 +1,31 @@
+{{ define "main" }}
+  {{ if .Content }}
+    <div class="index-content {{ if .Params.framed -}}framed{{- end -}}">
+      {{ .Content }}
+    </div>
+  {{ end }}
+
+  {{/* Latest articles section */}}
+  {{ $articles := where .Site.RegularPages "Type" "articles" }}
+  {{ if $articles }}
+    <div class="latest-section">
+      <h2>Latest</h2>
+      <div class="posts">
+        {{ range first 3 $articles }}
+          <article class="post on-list">
+            <h3 class="post-title">
+              <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>
+            </h3>
+            <div class="post-meta">
+              {{- if .Date -}}
+                <time class="post-date">
+                  {{- partial "post-date" . -}}
+                </time>
+              {{- end -}}
+            </div>
+          </article>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+{{ end }}
