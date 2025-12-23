@@ -49,8 +49,14 @@ jobs:
         run: |
           hugo \
             --gc \
+            --ignoreCache \
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Add cache-busting to static CSS
+        run: |
+          TIMESTAMP=$(date +%s)
+          find public -name '*.html' -exec sed -i "s|/style.css\"|/style.css?v=${TIMESTAMP}\"|g" {} \;
 
       - name: Copy CNAME to public
         run: cp CNAME public/CNAME
