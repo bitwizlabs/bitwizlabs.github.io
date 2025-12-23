@@ -1,2 +1,2 @@
-# bitwizlabs.github.io
-Digital logic design and fpga-accelerated systems
+# bitwiz.io
+Digital logic design and FPGA-accelerated systems

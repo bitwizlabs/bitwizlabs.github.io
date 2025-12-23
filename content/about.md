@@ -41,7 +41,7 @@ I believe in:
 
 ### This Site
 
-bitwizlabs is where I share projects, techniques, and tools from my work. Everything here is meant to be practical and applicable to real designs.
+bitwiz is where I share projects, techniques, and tools from my work. Everything here is meant to be practical and applicable to real designs.
 
 ---
 
@@ -53,4 +53,4 @@ bitwizlabs is where I share projects, techniques, and tools from my work. Everyt
 
 ---
 
-© 2025 bitwizlabs
+© 2025 bitwiz
