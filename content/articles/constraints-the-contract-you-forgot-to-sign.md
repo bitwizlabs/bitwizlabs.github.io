@@ -410,4 +410,4 @@ These constraints compile but aren't correct for your board. Use the formulas an
 
 ---
 
-*Next in the series: Understanding Timing Analysis*
+*Next in the series: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)*
