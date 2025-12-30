@@ -1,6 +1,7 @@
 ---
 title: "Resources"
 description: "Downloadable tools, scripts, and templates"
+noindex: true
 ---
 
 Tools, scripts, and templates I've built over the years. Free to use under MIT license unless otherwise noted.
