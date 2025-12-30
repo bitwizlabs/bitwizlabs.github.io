@@ -9,9 +9,12 @@
       <article class="post on-list">
         <h2 class="post-title">
           <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>
+          {{- with .Params.status }}
+            <span class="status-badge">{{ . }}</span>
+          {{- end }}
         </h2>
         <div class="post-meta">
-          {{- if .Date -}}
+          {{- if and .Date (ne .Type "projects") -}}
             <time class="post-date">
               {{- partial "post-date" . -}}
             </time>

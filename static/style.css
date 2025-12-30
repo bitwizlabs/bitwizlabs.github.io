@@ -414,3 +414,54 @@ button {
   font-size: 0.85em;
   opacity: 0.7;
 }
+
+/* Status badge for projects */
+
+.status-badge {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--accent);
+  color: var(--background);
+  padding: 2px 8px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+/* Featured projects section on homepage */
+
+.featured-section {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--accent);
+}
+
+.featured-section h2 {
+  margin-bottom: 15px;
+}
+
+.featured-section .post {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+}
+
+.featured-section .post-title {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+}
+
+.featured-section .post-title a {
+  text-decoration: none;
+}
+
+.featured-section .post-title a:hover {
+  text-decoration: underline;
+}
+
+.featured-section .post-content {
+  font-size: 0.9em;
+  opacity: 0.85;
+  margin-top: 8px;
+}
