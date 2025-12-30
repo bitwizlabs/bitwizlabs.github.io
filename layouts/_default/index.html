@@ -30,16 +30,23 @@
     </div>
   {{ end }}
 
-  {{/* Latest articles section */}}
+  {{/* Timing Series section */}}
   {{ $articles := where .Site.RegularPages "Type" "articles" }}
   {{ if $articles }}
     <div class="latest-section">
-      <h2>Latest</h2>
+      <h2>Timing Series</h2>
+      <p><em>A four-part deep dive into FPGA timing, constraints, and closure.</em></p>
       <div class="posts">
-        {{ range first 3 $articles }}
+        {{ range sort $articles ".Date" "asc" }}
           <article class="post on-list">
             <h3 class="post-title">
+              {{ $index := 0 }}
+              {{ range $i, $a := (sort $articles ".Date" "asc") }}
+                {{ if eq $a.Permalink $.Permalink }}{{ $index = add $i 1 }}{{ end }}
+              {{ end }}
+              <span class="series-number">Part {{ $index }}:</span>
               <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>
+              {{ if eq $index 1 }}<span class="start-here">← Start here</span>{{ end }}
             </h3>
             <div class="post-meta">
               {{- if .Date -}}

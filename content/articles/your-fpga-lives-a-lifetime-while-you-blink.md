@@ -7,6 +7,10 @@ tags: ["FPGA", "timing", "10GbE", "hardware"]
 categories: ["articles"]
 ---
 
+*Timing Series: Part 1 of 4*
+
+---
+
 ## The Moment Everything Breaks
 
 You're staring at a timing report. One line:
@@ -250,3 +254,16 @@ Inside, 156 million clock edges fire every second. Flip-flops toggle. Signals ra
 Right now, in data centers and cell towers and medical devices, chips like this are running. Silently. Perfectly. Processing more data in one second than you could read in a lifetime.
 
 While you took a breath just now, an entire lifetime passed inside the silicon.
+
+---
+
+## Timing Series
+
+1. **Your FPGA Lives a Lifetime While You Blink** — Why timing satisfies or breaks *(you are here)*
+2. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
+3. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
+4. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
+
+---
+
+*Next: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) →*

@@ -50,7 +50,3 @@ bitwiz is where I share projects, techniques, and tools from my work. Everything
 📧 **Email**: [hello@bitwiz.io](mailto:hello@bitwiz.io)
 
 *I read every email, though response times vary based on workload.*
-
----
-
-© 2025 bitwiz

@@ -44,11 +44,6 @@ theme = "hugo-theme-terminal"
     url = "/articles/"
     weight = 2
   [[menu.main]]
-    identifier = "resources"
-    name = "resources"
-    url = "/resources/"
-    weight = 3
-  [[menu.main]]
     identifier = "about"
     name = "about"
     url = "/about/"
