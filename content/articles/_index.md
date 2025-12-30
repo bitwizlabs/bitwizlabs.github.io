@@ -3,6 +3,6 @@ title: "Articles"
 description: "Technical notes on FPGA design, verification, and automation"
 ---
 
-Technical notes, tutorials, and musings on digital design.
+Reference notes on FPGA timing closure, constraints, and verification.
 
-Topics include verification methodology, timing closure strategies, and RTL design patterns.
+Topics include timing analysis, constraint methodology, and RTL design patterns.

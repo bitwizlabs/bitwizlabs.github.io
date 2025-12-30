@@ -8,7 +8,7 @@ description: "Digital logic design & FPGA-accelerated systems"
 ```systemverilog
 // bitwiz.sv
 // Author: Alexis
-// Identity: FPGA Engineer | USA Born | MXN Heritage | Yerba Mate Powered
+// Identity: FPGA Engineer | Timing Closure | Tooling | Yerba Mate Powered
 // Description: Homepage signature FSM
 
 module bitwiz (

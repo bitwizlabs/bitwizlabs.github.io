@@ -5,7 +5,7 @@ description: "About bitwiz"
 
 ## About bitwiz
 
-I'm an FPGA engineer with 5+ years of experience building high-performance digital systems.
+I'm Alexis, an FPGA engineer with 5+ years of experience building high-performance digital systems.
 
 ### Background
 
