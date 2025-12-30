@@ -5,6 +5,31 @@
     </div>
   {{ end }}
 
+  {{/* Featured projects section */}}
+  {{ $featuredProjects := where (where .Site.RegularPages "Type" "projects") ".Params.featured" true }}
+  {{ if $featuredProjects }}
+    <div class="featured-section">
+      <h2>Featured Projects</h2>
+      <div class="posts">
+        {{ range $featuredProjects }}
+          <article class="post on-list">
+            <h3 class="post-title">
+              <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>
+              {{- with .Params.status }}
+                <span class="status-badge">{{ . }}</span>
+              {{- end }}
+            </h3>
+            {{ if .Description }}
+              <div class="post-content">
+                <p>{{ .Description | markdownify }}</p>
+              </div>
+            {{ end }}
+          </article>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+
   {{/* Latest articles section */}}
   {{ $articles := where .Site.RegularPages "Type" "articles" }}
   {{ if $articles }}
