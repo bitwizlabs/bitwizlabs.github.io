@@ -609,4 +609,4 @@ That's the difference between debugging and guessing.
 
 ---
 
-*Next in the series: Pipelining Without Breaking Your Protocol*
+*Next in the series: [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/)*
