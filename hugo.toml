@@ -11,7 +11,7 @@ theme = "hugo-theme-terminal"
 [params]
   # Terminal theme settings
   themeColor = "green"
-  showMenuItems = 4
+  showMenuItems = 3
   fullWidthTheme = false
   centerTheme = true
 
