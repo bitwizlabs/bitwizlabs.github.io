@@ -7,7 +7,8 @@ tags: ["FPGA", "timing", "STA", "hardware"]
 categories: ["articles"]
 ---
 
-*This is Part 3 of the FPGA Timing & Constraints series. Previously: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/)*
+*Timing Series: Part 3 of 4*
+*Previous: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/)*
 
 ---
 
@@ -609,4 +610,13 @@ That's the difference between debugging and guessing.
 
 ---
 
-*Next in the series: [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/)*
+## Timing Series
+
+1. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
+2. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
+3. **Understanding Timing Analysis** — How to read timing reports *(you are here)*
+4. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
+
+---
+
+*← Previous: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/)* | *Next: [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) →*

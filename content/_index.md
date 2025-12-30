@@ -3,6 +3,8 @@ title: "bitwiz"
 description: "Digital logic design & FPGA-accelerated systems"
 ---
 
+*Deep technical writing on FPGA timing, constraints, and RTL design patterns.*
+
 ```systemverilog
 // bitwiz.sv
 // Author: Alexis

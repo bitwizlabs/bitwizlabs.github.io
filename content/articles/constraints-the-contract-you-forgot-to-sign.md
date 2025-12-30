@@ -7,6 +7,11 @@ tags: ["FPGA", "timing", "constraints", "CDC", "hardware"]
 categories: ["articles"]
 ---
 
+*Timing Series: Part 2 of 4*
+*Previous: [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/)*
+
+---
+
 ## Signoff Gates: Build Must Fail If...
 
 Before reading further, know this: your build should fail if any of these checks fail.
@@ -410,4 +415,13 @@ These constraints compile but aren't correct for your board. Use the formulas an
 
 ---
 
-*Next in the series: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)*
+## Timing Series
+
+1. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
+2. **Constraints: The Contract You Forgot to Sign** — How to write constraints *(you are here)*
+3. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
+4. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
+
+---
+
+*← Previous: [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/)* | *Next: [Understanding Timing Analysis](/articles/understanding-timing-analysis/) →*
