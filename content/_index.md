@@ -5,7 +5,7 @@ description: "Digital logic design & FPGA-accelerated systems"
 
 ```systemverilog
 // bitwiz.sv
-// Author: Alexis Martin Lopez
+// Author: Alexis
 // Identity: FPGA Engineer | USA Born | MXN Heritage | Yerba Mate Powered
 // Description: Homepage signature FSM
 
