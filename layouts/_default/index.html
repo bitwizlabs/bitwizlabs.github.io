@@ -40,10 +40,9 @@
         {{ range $idx, $article := sort $articles ".Date" "asc" }}
           <article class="post on-list">
             <h3 class="post-title">
-              {{ $partNum := add $idx 1 }}
-              <span class="series-number">Part {{ $partNum }}:</span>
+              <span class="series-number">Part {{ add $idx 1 }}:</span>
               <a href="{{ $article.Permalink }}">{{ $article.Title | markdownify }}</a>
-              {{ if eq $partNum 1 }}<span class="start-here">← Start here</span>{{ end }}
+              {{ if eq $idx 0 }}<span class="start-here">← Start here</span>{{ end }}
             </h3>
             <div class="post-meta">
               {{- if .Date -}}
