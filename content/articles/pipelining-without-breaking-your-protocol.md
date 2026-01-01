@@ -7,7 +7,7 @@ tags: ["FPGA", "pipelining", "timing", "protocols", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 4 of 4*
+*Timing Series: Part 4 of 5*
 *Previous: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)*
 
 ---
@@ -588,7 +588,8 @@ You know. That's why you're the engineer.
 2. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
 3. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
 4. **Pipelining Without Breaking Your Protocol** — How to fix violations *(you are here)*
+5. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
 
 ---
 
-*← Previous: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)*
+*← Previous: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)* | *Next: [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) →*
