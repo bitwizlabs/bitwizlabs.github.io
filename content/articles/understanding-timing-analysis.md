@@ -7,7 +7,7 @@ tags: ["FPGA", "timing", "STA", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 3 of 4*
+*Timing Series: Part 3 of 5*
 *Previous: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/)*
 
 ---
@@ -616,6 +616,7 @@ That's the difference between debugging and guessing.
 2. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
 3. **Understanding Timing Analysis** — How to read timing reports *(you are here)*
 4. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
+5. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
 
 ---
 

@@ -7,7 +7,7 @@ tags: ["FPGA", "timing", "constraints", "CDC", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 2 of 4*
+*Timing Series: Part 2 of 5*
 *Previous: [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/)*
 
 ---
@@ -421,6 +421,7 @@ These constraints compile but aren't correct for your board. Use the formulas an
 2. **Constraints: The Contract You Forgot to Sign** — How to write constraints *(you are here)*
 3. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
 4. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
+5. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
 
 ---
 
