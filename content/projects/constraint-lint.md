@@ -1,5 +1,6 @@
 ---
 title: "constraint-lint"
+date: 2026-01-01
 draft: false
 description: "Your XDC file is code. Vivado doesn't lint it."
 tags: ["FPGA", "timing", "constraints", "tooling", "open-source"]

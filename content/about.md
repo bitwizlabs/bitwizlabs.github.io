@@ -1,6 +1,8 @@
 ---
 title: "About"
 description: "About bitwiz"
+_build:
+  list: never
 ---
 
 ## About bitwiz
