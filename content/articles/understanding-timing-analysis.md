@@ -63,7 +63,7 @@ Slack is computed from Arrival Time and Required Time. Both include clock networ
 
 ## Misconstrained Critical Paths: Check Before You Debug
 
-Sometimes the critical path is misconstrained—optimizing it won't improve real timing closure. The tool isn't wrong; your constraints are. It's often a CDC path that should be constrained differently (related-clock constraint if truly related, async clock groups if truly async, or false path only when the transfer is logically invalid to time)—not "optimized."
+Sometimes the critical path is misconstrained-optimizing it won't improve real timing closure. The tool isn't wrong; your constraints are. It's often a CDC path that should be constrained differently (related-clock constraint if truly related, async clock groups if truly async, or false path only when the transfer is logically invalid to time)-not "optimized."
 
 **Signs of a misconstrained path:**
 
@@ -169,7 +169,7 @@ Data Required Time:
   - Clock uncertainty
 ```
 
-**Note:** If the path is multicycle or between related clocks with phase offset, "Capture edge = period" is wrong. Treat Requirement as ground truth for the capture edge used for this path. If it isn't your clock period, you're not looking at a plain single-cycle path—stop and find out why before touching RTL.
+**Note:** If the path is multicycle or between related clocks with phase offset, "Capture edge = period" is wrong. Treat Requirement as ground truth for the capture edge used for this path. If it isn't your clock period, you're not looking at a plain single-cycle path-stop and find out why before touching RTL.
 
 ---
 
@@ -212,7 +212,7 @@ Skew is the difference between clock arrivals: DCD (Destination Clock Delay) min
 
 ## Why STA Is Pessimistic
 
-STA uses worst-case assumptions and may apply common-path adjustments in detailed reports. If your hand math is off by ~0.05–0.3 ns, it's usually CPPR (common path pessimism removal: reduces pessimism when launch and capture clocks share clock routing), jitter decomposition, or clock uncertainty modeling—not a mistake in your subtraction.
+STA uses worst-case assumptions and may apply common-path adjustments in detailed reports. If your hand math is off by ~0.05–0.3 ns, it's usually CPPR (common path pessimism removal: reduces pessimism when launch and capture clocks share clock routing), jitter decomposition, or clock uncertainty modeling-not a mistake in your subtraction.
 
 For exact tracing, use the detailed path report with `full_clock_expanded`. The summary view hides adjustment terms.
 
@@ -342,7 +342,7 @@ A path that "passed" hold with estimates can fail once real routing is extracted
 
 When hold fails, you need to slow down the data path. Follow this order:
 
-1. **Let the tool fix it first.** Run `phys_opt_design -hold_fix` (Vivado). The tool adds delay on the data path automatically. Re-check setup afterward—hold-fixing trades margin. If you're also close on setup, run hold-fix late in the flow.
+1. **Let the tool fix it first.** Run `phys_opt_design -hold_fix` (Vivado). The tool adds delay on the data path automatically. Re-check setup afterward-hold-fixing trades margin. If you're also close on setup, run hold-fix late in the flow.
 
 2. **Add intentional delay locally.** Add a small, tool-friendly delay element on the data path and preserve it with `DONT_TOUCH` or `KEEP`. If you don't lock it down, the tool will optimize your "delay" away.
 
@@ -507,7 +507,7 @@ report_timing -of_objects $path -path_type full_clock_expanded
 
 ### Quartus (TimeQuest)
 
-Run Report Timing in the GUI. Copy the Tcl from the Command Info tab—Intel documents that the report includes the exact command used. This avoids version-specific flag issues.
+Run Report Timing in the GUI. Copy the Tcl from the Command Info tab-Intel documents that the report includes the exact command used. This avoids version-specific flag issues.
 
 For scripting, common patterns:
 
@@ -605,7 +605,7 @@ This article is about enforcement: how the tool checks whether your design meets
 
 The constraints are the law. The timing report is the verdict. That -0.247 ns isn't a suggestion.
 
-You can trace the math now. You can read the report and identify the bottleneck. Route-dominated? Fix placement. Logic-dominated? Fix RTL. Skew-dependent? Treat as fragile—placement changes can flip the skew. Big TNS? It's architectural.
+You can trace the math now. You can read the report and identify the bottleneck. Route-dominated? Fix placement. Logic-dominated? Fix RTL. Skew-dependent? Treat as fragile-placement changes can flip the skew. Big TNS? It's architectural.
 
 That's the difference between debugging and guessing.
 
@@ -613,8 +613,8 @@ That's the difference between debugging and guessing.
 
 ## Timing Series
 
-0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
-1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
-2. **Understanding Timing Analysis** — How to read timing reports *(you are here)*
-3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
-4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
+0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) - Why timing satisfies or breaks
+1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) - How to write constraints
+2. **Understanding Timing Analysis** - How to read timing reports *(you are here)*
+3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) - How to fix violations
+4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) - How to manage resources

@@ -16,7 +16,7 @@ categories: ["articles"]
 
 ## Friday Afternoon
 
-Friday afternoon. Timing met with 200 ps margin. I merged a teammate's "small" feature branch—an extra output mux, some debug registers, maybe 2000 LUTs.
+Friday afternoon. Timing met with 200 ps margin. I merged a teammate's "small" feature branch-an extra output mux, some debug registers, maybe 2000 LUTs.
 
 Monday morning: 847 failing paths. Six-hour build times. Demo on Thursday.
 
@@ -32,7 +32,7 @@ Failing paths: 0                 Failing paths: 847
 
 The utilization report said I was fine. 93% fits. But the router disagreed. Every wire fought for routing tracks. Critical paths detoured through congested regions. Placement became a puzzle with no good solutions.
 
-You need to read the reports that matter, recognize the patterns that predict trouble, and know when to optimize—before you hit the cliff, not after.
+You need to read the reports that matter, recognize the patterns that predict trouble, and know when to optimize-before you hit the cliff, not after.
 
 ---
 
@@ -323,7 +323,7 @@ The cliff isn't exactly at these numbers. It depends on your device, clock frequ
 
 ## When Congestion Hits Your Timing Report
 
-The utilization report won't warn you. But the timing report will—if you know what to look for.
+The utilization report won't warn you. But the timing report will-if you know what to look for.
 
 **Route-dominated paths:**
 
@@ -428,7 +428,7 @@ Build time: 6.2 hours            Build time: 38 minutes
 Failing paths: 847               Failing paths: 0
 ```
 
-I overshot. 53% gives room for the next feature. The packet buffer change was the biggest win—distributed RAM for a 4K×64 buffer was burning LUTs that BRAM handles for free.
+I overshot. 53% gives room for the next feature. The packet buffer change was the biggest win-distributed RAM for a 4K×64 buffer was burning LUTs that BRAM handles for free.
 
 **The multiplier fix:**
 
@@ -676,14 +676,14 @@ Resource budgeting isn't about fitting. It's about leaving room. Room for timing
 
 The utilization report gives you one number. Reality is a spatial puzzle of competing resources, congested routes, and non-linear cliffs. Know what you're buying, know where the cliffs are, and leave room to maneuver.
 
-*Next in the series: CDC—Two Flip-Flops Are Not Magic*
+*Next in the series: CDC-Two Flip-Flops Are Not Magic*
 
 ---
 
 ## Timing Series
 
-0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
-1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
-2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
-3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
-4. **Silicon Real Estate: Your Resource Budget** — How to manage resources *(you are here)*
+0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) - Why timing satisfies or breaks
+1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) - How to write constraints
+2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) - How to read timing reports
+3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) - How to fix violations
+4. **Silicon Real Estate: Your Resource Budget** - How to manage resources *(you are here)*

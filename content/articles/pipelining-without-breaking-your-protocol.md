@@ -92,7 +92,7 @@ And the invariant that protocol specs bury in fine print:
 
 **When valid is high and ready is low, the source must hold valid and data stable until the transfer completes.**
 
-Every pipelining strategy depends on this. Violate it and nothing works. Every slice and FIFO in this article assumes the upstream obeys "hold stable while stalled." If it doesn't, your protocol is already broken—no amount of buffering will save you.
+Every pipelining strategy depends on this. Violate it and nothing works. Every slice and FIFO in this article assumes the upstream obeys "hold stable while stalled." If it doesn't, your protocol is already broken-no amount of buffering will save you.
 
 ---
 
@@ -163,7 +163,7 @@ end
 assign ready_upstream = accept;
 ```
 
-This is a single-entry slice. It breaks forward timing and handles backpressure correctly. But `ready_upstream` is still combinational—chain ten of these and `ready` becomes your critical path.
+This is a single-entry slice. It breaks forward timing and handles backpressure correctly. But `ready_upstream` is still combinational-chain ten of these and `ready` becomes your critical path.
 
 ---
 
@@ -187,7 +187,7 @@ end
 
 Timing closes. You ship. Production reports: every other packet has a bad CRC.
 
-The problem: `valid_in` still propagates combinationally while `data_in` now takes two cycles. When `valid_out` asserts, it's pointing at data from two cycles ago—but the CRC reflects only one cycle of delay.
+The problem: `valid_in` still propagates combinationally while `data_in` now takes two cycles. When `valid_out` asserts, it's pointing at data from two cycles ago-but the CRC reflects only one cycle of delay.
 
 ```
          ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐
@@ -292,7 +292,7 @@ Most production designs end up at the bottom: 2-entry FIFO or vendor IP. But kno
 
 ## Bypass Skid Buffer: Backpressure Without Timing Fix
 
-A bypass skid buffer catches the beat in flight when backpressure arrives late. It does NOT break the forward timing path—data passes through combinationally when the buffer is empty.
+A bypass skid buffer catches the beat in flight when backpressure arrives late. It does NOT break the forward timing path-data passes through combinationally when the buffer is empty.
 
 ```systemverilog
 module bypass_skid #(
@@ -365,7 +365,7 @@ data     < A  >< B  >< B  >< C  >< C  >< D  >< D  >< E  >
 
 Beat B gets caught in the buffer, then delivered. During the drain cycle, `ready_out` is low (buffer full), so we can't accept C yet. This repeats, giving 50% effective throughput.
 
-**Reset note**: With synchronous reset, hold `rst` high for at least one clock so internal state is known. After that, `ready_out` is high because the buffer is empty. Reset flushes any buffered beat—if you need lossless reset, add reset fencing or replay above this block.
+**Reset note**: With synchronous reset, hold `rst` high for at least one clock so internal state is known. After that, `ready_out` is high because the buffer is empty. Reset flushes any buffered beat-if you need lossless reset, add reset fencing or replay above this block.
 
 ---
 
@@ -377,7 +377,7 @@ When I say "break the forward timing path," I mean removing the same-cycle combi
 
 This 2-entry FIFO is the core logic inside what vendors call a "fully registered slice."
 
-**Warning**: `ready_out` is still combinational—it depends on `ready_in` via `pop`. If you chain many of these, ready can still become your critical path. Vendor register slices solve this with internal staging. Never generate `ready_in` combinationally from `ready_out`—that creates a ready loop that can deadlock or oscillate. Same rule for valid: don't build combinational loops involving valid and ready across blocks.
+**Warning**: `ready_out` is still combinational-it depends on `ready_in` via `pop`. If you chain many of these, ready can still become your critical path. Vendor register slices solve this with internal staging. Never generate `ready_in` combinationally from `ready_out`-that creates a ready loop that can deadlock or oscillate. Same rule for valid: don't build combinational loops involving valid and ready across blocks.
 
 This implementation uses explicit flops (not array inference) for deterministic behavior:
 
@@ -441,14 +441,14 @@ endmodule
 ```
 
 **What this does**:
-- Storage in explicit flops (`q0`, `q1`)—no RAM inference ambiguity
+- Storage in explicit flops (`q0`, `q1`)-no RAM inference ambiguity
 - `data_out = q0` comes from a storage flop, not a bypass mux
 - `ready_out` includes pop-enables-push logic: can accept a new beat in the same cycle we're draining one
 - No drain bubbles when popping and pushing simultaneously
 
 **Latency**: Minimum 1 cycle. A beat accepted on the input in cycle N can be accepted by the sink no earlier than cycle N+1. Both data and valid are effectively registered (`data_out` reads from `q0`, `valid_out` derives from the registered `count`).
 
-**Reset note**: Same as bypass skid—with synchronous reset, hold `rst` high for at least one clock so `count` is known. After that, `ready_out` is high because the FIFO is empty. Reset flushes any buffered beats.
+**Reset note**: Same as bypass skid-with synchronous reset, hold `rst` high for at least one clock so `count` is known. After that, `ready_out` is high because the FIFO is empty. Reset flushes any buffered beats.
 
 **Cycle-by-cycle under alternating ready** (valid_in always high, presenting A, B, C, D, E, F):
 
@@ -482,7 +482,7 @@ count    ──< 0 ><  1  ><  2  ><  2  ><  2  ><  2  ><  2  ><  2  >
 
 Key insight: When `count == 2` and `ready_in` goes high, `pop` is true, so `ready_out = (count != 2) || pop = 0 || 1 = 1`. We push and pop simultaneously, avoiding drain bubbles.
 
-With `ready_in` alternating 1/0, sink throughput is 50% by definition—the sink only accepts on half the cycles. The FIFO's advantage is that it keeps accepting from upstream on pop cycles even when full, avoiding extra bubbles beyond what the sink forces.
+With `ready_in` alternating 1/0, sink throughput is 50% by definition-the sink only accepts on half the cycles. The FIFO's advantage is that it keeps accepting from upstream on pop cycles even when full, avoiding extra bubbles beyond what the sink forces.
 
 The advantages over bypass skid are:
 1. Output comes from storage flops, not a combinational bypass mux
@@ -527,7 +527,7 @@ Article 2 showed why a pipeline register can make timing worse. Here's how that 
 
 **Route-dominated path**: Adding a register slice doesn't help if the problem is wire length. Use pblocks (Vivado) or Logic Lock regions (Quartus) to pull logic together.
 
-**Bypass skid tradeoff**: Solves backpressure but adds a mux on the data path. If your path is already logic-dominated, this can hurt timing. Use a 2-entry FIFO instead—output reads from a storage flop rather than a bypass mux, giving cleaner timing characteristics.
+**Bypass skid tradeoff**: Solves backpressure but adds a mux on the data path. If your path is already logic-dominated, this can hurt timing. Use a 2-entry FIFO instead-output reads from a storage flop rather than a bypass mux, giving cleaner timing characteristics.
 
 **Register slice tradeoff**: Breaks timing paths but can worsen placement if it pulls logic apart across the die. Check placement before and after.
 
@@ -549,7 +549,7 @@ Article 2 showed why a pipeline register can make timing worse. Here's how that 
 
 ## The Sideband Trap
 
-AXI-Stream has `tvalid`, `tready`, `tdata`—and also `tlast`, `tkeep`, `tuser`, `tid`, `tdest`. Every signal must pipeline together:
+AXI-Stream has `tvalid`, `tready`, `tdata`-and also `tlast`, `tkeep`, `tuser`, `tid`, `tdest`. Every signal must pipeline together:
 
 ```systemverilog
 // Single-entry slice with sidebands
@@ -624,7 +624,7 @@ If your system has a latency constraint (feedback loop, control path, real-time 
 
 ## When NOT to Pipeline
 
-**Feedback loops**: If you pipeline `threshold_reached` in a credit counter, the loop reacts one cycle late. This can cause overflow. Don't pipeline feedback paths—pipeline the fanout instead.
+**Feedback loops**: If you pipeline `threshold_reached` in a credit counter, the loop reacts one cycle late. This can cause overflow. Don't pipeline feedback paths-pipeline the fanout instead.
 
 **Fixed-latency protocols**: PCIe completion timeout, DDR read latency, video blanking. Adding stages without adjusting the protocol breaks things at the system level.
 
@@ -636,7 +636,7 @@ For production designs, use the vendor IP.
 
 **Vivado IP Catalog**: Search for "axis_register_slice"
 
-**REG_CONFIG settings** (check current Product Guide—values change between versions):
+**REG_CONFIG settings** (check current Product Guide-values change between versions):
 - 0 = Bypass (no registers)
 - 1 = Fully registered (2-entry storage, 1-2 cycle latency)
 - Other values for SLR crossing, lightweight modes
@@ -655,7 +655,7 @@ When pipelining breaks something:
 - [ ] Did you gate updates on `ready || !valid`? Unconditional updates break the protocol
 - [ ] Did you handle backpressure? If ready is registered anywhere, you need storage
 - [ ] Did you add latency to a feedback path? Check credit counters, flow control, state machines
-- [ ] Did placement change? New registers can pull logic apart—compare placement reports
+- [ ] Did placement change? New registers can pull logic apart-compare placement reports
 
 ---
 
@@ -683,11 +683,11 @@ When pipelining breaks something:
 
 ## The Protocol Isn't Optional
 
-Article 2 taught you to read timing reports—to trace the math from requirement to arrival. You can close timing now.
+Article 2 taught you to read timing reports-to trace the math from requirement to arrival. You can close timing now.
 
 But timing closure means nothing if the design doesn't work.
 
-A bypass skid buffer handles backpressure but doesn't break the forward timing path. A naive register breaks timing but loses data. A 2-entry FIFO breaks forward timing and absorbs stalls—but ready is still combinational. Know which problem you're solving.
+A bypass skid buffer handles backpressure but doesn't break the forward timing path. A naive register breaks timing but loses data. A 2-entry FIFO breaks forward timing and absorbs stalls-but ready is still combinational. Know which problem you're solving.
 
 The timing tool doesn't know your protocol. It sees flip-flops and combinational logic. It doesn't know that `valid` and `data` must move together, or that registering `ready` needs storage, or that your unconditional update just violated the handshake.
 
@@ -697,8 +697,8 @@ You know. That's why you're the engineer.
 
 ## Timing Series
 
-0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
-1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
-2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
-3. **Pipelining Without Breaking Your Protocol** — How to fix violations *(you are here)*
-4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
+0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) - Why timing satisfies or breaks
+1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) - How to write constraints
+2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) - How to read timing reports
+3. **Pipelining Without Breaking Your Protocol** - How to fix violations *(you are here)*
+4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) - How to manage resources

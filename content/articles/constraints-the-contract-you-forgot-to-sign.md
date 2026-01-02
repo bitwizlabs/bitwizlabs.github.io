@@ -43,7 +43,7 @@ Fail if:
 - A clock pair is "Async" but is actually related (same source)
 - Any "unclocked" or "no clock" endpoints exist
 
-Action: If you cannot prove clocks are related (same source with known relationship), treat as async and implement CDC. Do not use constraints to guess — decide architecture first, constraints second.
+Action: If you cannot prove clocks are related (same source with known relationship), treat as async and implement CDC. Do not use constraints to guess - decide architecture first, constraints second.
 
 If you ship with any of these gates failing, "Timing Met" is fiction.
 
@@ -57,7 +57,7 @@ Three weeks later, it fails in the field. Intermittent. Unreproducible in the la
 
 The postmortem takes two weeks. The answer is one line in your XDC file that isn't there.
 
-You constrained the 100 MHz input clock. But the PLL output — the 156.25 MHz clock that actually feeds your datapath — has no constraint. The tools timed a fraction of your design.
+You constrained the 100 MHz input clock. But the PLL output - the 156.25 MHz clock that actually feeds your datapath - has no constraint. The tools timed a fraction of your design.
 
 *(You can get the same failure from: missing I/O delays, clock defined on the wrong object, or over-broad exceptions.)*
 
@@ -81,7 +81,7 @@ A clock without a constraint is unconstrained. Paths clocked by that signal have
 create_clock -period 6.4 -name clk_156 [get_ports clk_in]
 ```
 
-**What happens when it's missing:** `check_timing` warns about unconstrained endpoints — but only if you treat those warnings as errors.
+**What happens when it's missing:** `check_timing` warns about unconstrained endpoints - but only if you treat those warnings as errors.
 
 **What happens when it's wrong:** You say 10 ns, but the real clock is 6.4 ns. Hardware fails at the real frequency.
 
@@ -97,9 +97,9 @@ If `report_clocks` does not show what you expect, treat it as a hard error.
 
 **If `report_clocks` already shows the generated clock, do not re-declare it.** Engineers sometimes redeclare with the wrong source pin or divide ratio, and now STA is lying while still "green."
 
-### Fabric Clock Dividers — Don't Do This
+### Fabric Clock Dividers - Don't Do This
 
-**The rule is not "no divided clocks" — it's "no LUT-generated clocks for real logic."** Divided clocks from dedicated clocking resources (BUFGCE_DIV, MMCM) are fine. Divided clocks from random LUT logic are the problem: high skew, not on a clock network.
+**The rule is not "no divided clocks" - it's "no LUT-generated clocks for real logic."** Divided clocks from dedicated clocking resources (BUFGCE_DIV, MMCM) are fine. Divided clocks from random LUT logic are the problem: high skew, not on a clock network.
 
 For performance-critical logic, use clock enables (CE) instead.
 
@@ -224,8 +224,8 @@ Reference clock: Capture edge at the DAC.
 
 | Parameter | Min | Max | From → To |
 |-----------|-----|-----|-----------|
-| DAC Tsu | — | 1.5 ns | Data stable before DAC captures |
-| DAC Th | 0.5 ns | — | Data stable after DAC captures |
+| DAC Tsu | - | 1.5 ns | Data stable before DAC captures |
+| DAC Th | 0.5 ns | - | Data stable after DAC captures |
 | Ddata | 0.4 ns | 0.6 ns | FPGA data pin → DAC data pin |
 | Dclk | 0.3 ns | 0.5 ns | Clock source → DAC clock pin |
 
@@ -242,7 +242,7 @@ set_output_delay -clock v_dac_clk -max 1.8 [get_ports dac_data[*]]
 set_output_delay -clock v_dac_clk -min -0.6 [get_ports dac_data[*]]
 ```
 
-**About negative `-min`:** A negative value can be valid — it means the allowed data transition window extends before the reference edge. **This does not mean "you're safe" unless you defined the clock at the correct capture point.** If your reference point is wrong, STA will give you precise numbers about the wrong problem.
+**About negative `-min`:** A negative value can be valid - it means the allowed data transition window extends before the reference edge. **This does not mean "you're safe" unless you defined the clock at the correct capture point.** If your reference point is wrong, STA will give you precise numbers about the wrong problem.
 
 **About virtual clocks:** Virtual clocks model external requirements. If your output clock is derived from an internal clock with a known relationship, you may instead constrain against that internal clock at the appropriate reference point. The key is reference consistency.
 
@@ -264,7 +264,7 @@ set_clock_groups -asynchronous -group {my_clk} -group {v_ext_clk}
 
 ### Board Delays Unknown?
 
-Estimate ~150-180 ps/inch for FR4 (varies with stackup — use your board data, not this guess). Refine after layout.
+Estimate ~150-180 ps/inch for FR4 (varies with stackup - use your board data, not this guess). Refine after layout.
 
 ---
 
@@ -272,7 +272,7 @@ Estimate ~150-180 ps/inch for FR4 (varies with stackup — use your board data, 
 
 ### False Paths
 
-Target the first synchronizer stage. **Over-matching is worse than no-matching** — you can accidentally disable timing to paths that aren't synchronizers.
+Target the first synchronizer stage. **Over-matching is worse than no-matching** - you can accidentally disable timing to paths that aren't synchronizers.
 
 ```tcl
 # Target first sync stage using regex (brace-delimited for safety)
@@ -397,7 +397,7 @@ set_output_delay -clock v_ext_clk -max 2.0 [get_ports data_out[*]]
 set_output_delay -clock v_ext_clk -min -0.5 [get_ports data_out[*]]
 
 # Note: This example uses FPGA-pin reference for inputs and device-capture
-# reference for outputs — a common pattern. The key is consistency within
+# reference for outputs - a common pattern. The key is consistency within
 # each calculation, documented with "from → to".
 
 # ------------------------------------------------------------------------------
@@ -418,8 +418,8 @@ These constraints compile but aren't correct for your board. Use the formulas an
 
 ## Timing Series
 
-0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
-1. **Constraints: The Contract You Forgot to Sign** — How to write constraints *(you are here)*
-2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
-3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
-4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
+0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) - Why timing satisfies or breaks
+1. **Constraints: The Contract You Forgot to Sign** - How to write constraints *(you are here)*
+2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) - How to read timing reports
+3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) - How to fix violations
+4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) - How to manage resources
