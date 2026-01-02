@@ -1,10 +1,4 @@
 {{- $date := .Date -}}
-{{- $prefix := "" -}}
-{{- if .Params.updated -}}
-  {{- $date = .Params.updated -}}
-  {{- $prefix = "Updated: " -}}
-{{- end -}}
-{{- $prefix -}}
 {{- with .Params.dateFormat -}}
   {{- $date | time.Format . -}}
 {{- else -}}
@@ -13,4 +7,18 @@
   {{- else -}}
     {{- $date | time.Format "2006-01-02" -}}
   {{- end -}}
+{{- end -}}
+{{- if .Params.updated -}}
+  {{- $updated := .Params.updated -}}
+  {{- " [Updated: " -}}
+  {{- with .Params.dateFormat -}}
+    {{- $updated | time.Format . -}}
+  {{- else -}}
+    {{- with .Site.Params.dateFormat -}}
+      {{- $updated | time.Format . -}}
+    {{- else -}}
+      {{- $updated | time.Format "2006-01-02" -}}
+    {{- end -}}
+  {{- end -}}
+  {{- "]" -}}
 {{- end -}}
