@@ -9,6 +9,7 @@ categories: ["articles"]
 ---
 
 *Timing Series: Part 4 of 4*
+
 *Previous: [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/)*
 
 ---

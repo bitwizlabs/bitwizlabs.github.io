@@ -8,6 +8,7 @@ categories: ["articles"]
 ---
 
 *Timing Series: Part 1 of 4*
+
 *Previous: [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/)*
 
 ---
