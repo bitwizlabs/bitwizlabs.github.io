@@ -8,9 +8,8 @@
     {{- $date | time.Format "2006-01-02" -}}
   {{- end -}}
 {{- end -}}
-{{- if .Params.updated -}}
+{{- if .Params.updated }} [Updated:
   {{- $updatedDate := .Params.updated -}}
-   [Updated:
   {{- with .Params.dateFormat -}}
     {{- $updatedDate | time.Format . -}}
   {{- else -}}
