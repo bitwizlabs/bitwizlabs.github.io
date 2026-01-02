@@ -8,7 +8,7 @@ tags: ["FPGA", "pipelining", "timing", "protocols", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 4 of 5*
+*Timing Series: Part 3 of 5*
 *Previous: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)*
 
 ---
@@ -520,7 +520,7 @@ For signals with sidebands (AXI-Stream's `tlast`, `tkeep`, `tuser`), either asse
 
 ## The Timing Connection
 
-Article 3 showed why a pipeline register can make timing worse. Here's how that connects:
+Article 2 showed why a pipeline register can make timing worse. Here's how that connects:
 
 **Logic-dominated path**: A register slice's output register breaks the combinational depth. This is what you want.
 
@@ -682,7 +682,7 @@ When pipelining breaks something:
 
 ## The Protocol Isn't Optional
 
-Article 3 taught you to read timing reports—to trace the math from requirement to arrival. You can close timing now.
+Article 2 taught you to read timing reports—to trace the math from requirement to arrival. You can close timing now.
 
 But timing closure means nothing if the design doesn't work.
 
@@ -700,11 +700,11 @@ You know. That's why you're the engineer.
 
 ## Timing Series
 
-1. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
-2. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
-3. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
-4. **Pipelining Without Breaking Your Protocol** — How to fix violations *(you are here)*
-5. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
+0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
+1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
+2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
+3. **Pipelining Without Breaking Your Protocol** — How to fix violations *(you are here)*
+4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
 
 ---
 

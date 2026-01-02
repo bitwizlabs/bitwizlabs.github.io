@@ -7,7 +7,7 @@ tags: ["FPGA", "timing", "STA", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 3 of 5*
+*Timing Series: Part 2 of 5*
 *Previous: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/)*
 
 ---
@@ -598,7 +598,7 @@ Required = Capture_Edge(Requirement) + Clk_to_Dest - Tsu - Uncertainty  (not jus
 
 ## The Contract, Enforced
 
-[Article 2](/articles/constraints-the-contract-you-forgot-to-sign/) was about writing the contract: constraints that define your timing requirements.
+[Article 1](/articles/constraints-the-contract-you-forgot-to-sign/) was about writing the contract: constraints that define your timing requirements.
 
 This article is about enforcement: how the tool checks whether your design meets those requirements.
 
@@ -612,11 +612,11 @@ That's the difference between debugging and guessing.
 
 ## Timing Series
 
-1. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
-2. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
-3. **Understanding Timing Analysis** — How to read timing reports *(you are here)*
-4. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
-5. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
+0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
+1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
+2. **Understanding Timing Analysis** — How to read timing reports *(you are here)*
+3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
+4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
 
 ---
 

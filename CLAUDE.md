@@ -67,6 +67,8 @@ weight: 1           # Sort order
 
 Currently 5 published articles covering timing fundamentals through resource budgeting. Planned expansion includes CDC, Resets, and FSMs.
 
+Series uses 0-indexed numbering (Part 0-4, not 1-5)—FPGA engineers count from zero.
+
 **Adding articles to the series:**
 1. Create `content/articles/slug-name.md`
 2. Use frontmatter: `categories: ["series"]` for auto-numbering

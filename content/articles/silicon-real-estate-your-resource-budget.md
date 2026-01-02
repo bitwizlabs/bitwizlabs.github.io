@@ -8,7 +8,7 @@ tags: ["FPGA", "resources", "utilization", "timing", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 5 of 5*
+*Timing Series: Part 4 of 5*
 *Previous: [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/)*
 
 ---
@@ -681,11 +681,11 @@ The utilization report gives you one number. Reality is a spatial puzzle of comp
 
 ## Timing Series
 
-1. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
-2. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
-3. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
-4. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
-5. **Silicon Real Estate: Your Resource Budget** — How to manage resources *(you are here)*
+0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
+1. [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) — How to write constraints
+2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
+3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
+4. **Silicon Real Estate: Your Resource Budget** — How to manage resources *(you are here)*
 
 ---
 

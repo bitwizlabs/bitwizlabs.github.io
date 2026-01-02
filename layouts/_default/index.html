@@ -35,12 +35,12 @@
   {{ if $articles }}
     <div class="latest-section">
       <h2>Timing Series</h2>
-      <p><em>A four-part deep dive into FPGA timing, constraints, and closure.</em></p>
+      <p><em>A five-part deep dive into FPGA timing, constraints, and closure.</em></p>
       <div class="posts">
         {{ range $idx, $article := sort $articles ".Date" "asc" }}
           <article class="post on-list">
             <h3 class="post-title">
-              <span class="series-number">Part {{ add $idx 1 }}:</span>
+              <span class="series-number">Part {{ $idx }}:</span>
               <a href="{{ $article.Permalink }}">{{ $article.Title | markdownify }}</a>
               {{ if eq $idx 0 }}<span class="start-here">← Start here</span>{{ end }}
             </h3>
