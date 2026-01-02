@@ -62,4 +62,4 @@ module bitwiz (
 endmodule
 ```
 
-Get in touch: [hello@bitwiz.io](mailto:hello@bitwiz.io)
+Get in touch: [alexis@bitwiz.io](mailto:alexis@bitwiz.io)

@@ -51,6 +51,6 @@ bitwiz is where I share projects, techniques, and tools from my work. Everything
 
 ## Contact
 
-📧 **Email**: [hello@bitwiz.io](mailto:hello@bitwiz.io)
+📧 **Email**: [alexis@bitwiz.io](mailto:alexis@bitwiz.io)
 
 *I read every email, though response times vary based on workload.*

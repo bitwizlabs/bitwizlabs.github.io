@@ -23,4 +23,4 @@ Project templates and boilerplate for common FPGA patterns.
 
 *Resources are being migrated to this site. Check back soon for downloadable content.*
 
-In the meantime, feel free to reach out: [hello@bitwiz.io](mailto:hello@bitwiz.io)
+In the meantime, feel free to reach out: [alexis@bitwiz.io](mailto:alexis@bitwiz.io)
