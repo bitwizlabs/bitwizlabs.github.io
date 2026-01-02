@@ -695,10 +695,6 @@ You know. That's why you're the engineer.
 
 ---
 
-*Next in the series: Silicon Real Estate: Your Resource Budget*
-
----
-
 ## Timing Series
 
 0. [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/) — Why timing satisfies or breaks
@@ -706,7 +702,3 @@ You know. That's why you're the engineer.
 2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
 3. **Pipelining Without Breaking Your Protocol** — How to fix violations *(you are here)*
 4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
-
----
-
-*← Previous: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)* | *Next: [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) →*

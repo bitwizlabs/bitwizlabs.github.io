@@ -687,7 +687,3 @@ The utilization report gives you one number. Reality is a spatial puzzle of comp
 2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
 3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
 4. **Silicon Real Estate: Your Resource Budget** — How to manage resources *(you are here)*
-
----
-
-*← Previous: [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/)*

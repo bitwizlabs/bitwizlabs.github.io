@@ -423,7 +423,3 @@ These constraints compile but aren't correct for your board. Use the formulas an
 2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
 3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
 4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
-
----
-
-*← Previous: [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/)* | *Next: [Understanding Timing Analysis](/articles/understanding-timing-analysis/) →*

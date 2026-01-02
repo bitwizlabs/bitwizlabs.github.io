@@ -264,7 +264,3 @@ While you took a breath just now, an entire lifetime passed inside the silicon.
 2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) — How to read timing reports
 3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) — How to fix violations
 4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) — How to manage resources
-
----
-
-*Next: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/) →*
