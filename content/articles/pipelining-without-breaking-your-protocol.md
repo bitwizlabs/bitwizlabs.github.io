@@ -8,7 +8,7 @@ tags: ["FPGA", "pipelining", "timing", "protocols", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 3 of 4*
+*Timing Series: Part 3 of 5*
 
 *Previous: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)*
 
@@ -702,3 +702,4 @@ You know. That's why you're the engineer.
 2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) - How to read timing reports
 3. **Pipelining Without Breaking Your Protocol** - How to fix violations *(you are here)*
 4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) - How to manage resources
+5. [CDC: Two Flip-Flops Are Not Magic](/articles/cdc-two-flip-flops-are-not-magic/) - How to cross clock domains

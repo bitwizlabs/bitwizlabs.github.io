@@ -8,7 +8,7 @@ tags: ["FPGA", "resources", "utilization", "timing", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 4 of 4*
+*Timing Series: Part 4 of 5*
 
 *Previous: [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/)*
 
@@ -676,8 +676,6 @@ Resource budgeting isn't about fitting. It's about leaving room. Room for timing
 
 The utilization report gives you one number. Reality is a spatial puzzle of competing resources, congested routes, and non-linear cliffs. Know what you're buying, know where the cliffs are, and leave room to maneuver.
 
-*Next in the series: CDC-Two Flip-Flops Are Not Magic*
-
 ---
 
 ## Timing Series
@@ -687,3 +685,4 @@ The utilization report gives you one number. Reality is a spatial puzzle of comp
 2. [Understanding Timing Analysis](/articles/understanding-timing-analysis/) - How to read timing reports
 3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) - How to fix violations
 4. **Silicon Real Estate: Your Resource Budget** - How to manage resources *(you are here)*
+5. [CDC: Two Flip-Flops Are Not Magic](/articles/cdc-two-flip-flops-are-not-magic/) - How to cross clock domains
