@@ -7,7 +7,7 @@ tags: ["FPGA", "timing", "STA", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 2 of 5*
+*Timing Series: Part 2 of 4*
 *Previous: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/)*
 
 ---

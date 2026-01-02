@@ -7,7 +7,7 @@ tags: ["FPGA", "timing", "10GbE", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 0 of 5*
+*Timing Series: Part 0 of 4*
 
 ---
 

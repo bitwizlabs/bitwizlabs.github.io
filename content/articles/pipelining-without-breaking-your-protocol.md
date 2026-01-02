@@ -8,7 +8,7 @@ tags: ["FPGA", "pipelining", "timing", "protocols", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 3 of 5*
+*Timing Series: Part 3 of 4*
 *Previous: [Understanding Timing Analysis](/articles/understanding-timing-analysis/)*
 
 ---
