@@ -1,6 +1,7 @@
 ---
 title: "Silicon Real Estate: Your Resource Budget"
 date: 2025-12-31
+updated: 2026-01-02
 draft: false
 description: "Understanding FPGA resource utilization - LUTs, registers, BRAM, DSPs, and why 94% utilization means your design won't close timing"
 tags: ["FPGA", "resources", "utilization", "timing", "hardware"]
@@ -12,35 +13,42 @@ categories: ["articles"]
 
 ---
 
-## The Report That Lies
+## Friday Afternoon
 
-You're staring at a utilization report:
+Friday afternoon. Timing met with 200 ps margin. I merged a teammate's "small" feature branch—an extra output mux, some debug registers, maybe 2000 LUTs.
 
-```
-+----------------------------+--------+-------+------------+
-| Resource                   | Used   | Avail | Util%      |
-+----------------------------+--------+-------+------------+
-| CLB LUTs                   | 142847 | 152064|  93.94%    |
-| CLB Registers              | 98234  | 304128|  32.30%    |
-| Block RAM Tile             | 289    | 360   |  80.28%    |
-| DSPs                       | 147    | 1368  |  10.75%    |
-+----------------------------+--------+-------+------------+
-```
+Monday morning: 847 failing paths. Six-hour build times. Demo on Thursday.
 
-Design fits. Timing fails.
+I hadn't added logic. I'd crossed the congestion cliff.
 
 ```
-Timing Summary:
-  WNS: -0.847 ns  (VIOLATED)
-  TNS: -234.6 ns
-  Failing Endpoints: 412
+Before merge:                    After merge:
+LUT utilization: 89%             LUT utilization: 93%
+WNS: +0.200 ns                   WNS: -0.847 ns
+Build time: 1.5 hours            Build time: 6.2 hours
+Failing paths: 0                 Failing paths: 847
 ```
 
-Vivado spent six hours routing. The same design closed timing at 70% LUT utilization three weeks ago. You added a feature, maybe 5% more logic, and now 412 paths fail.
+The utilization report said I was fine. 93% fits. But the router disagreed. Every wire fought for routing tracks. Critical paths detoured through congested regions. Placement became a puzzle with no good solutions.
 
-You didn't add logic. You added congestion.
+You need to read the reports that matter, recognize the patterns that predict trouble, and know when to optimize—before you hit the cliff, not after.
 
-The utilization report tells you whether the design fits in the device. It doesn't tell you whether it routes. It doesn't tell you whether it meets timing. A design at 94% LUT can be harder to close than a design at 75% LUT running 50 MHz faster. The relationship between utilization and timing is non-linear, and the report won't warn you when you've crossed the cliff.
+---
+
+## Resource Smells
+
+Experienced engineers recognize these patterns in utilization reports. They rarely write them down:
+
+| Pattern | What It Means | Likely Problem |
+|---------|---------------|----------------|
+| **LUTs >> FFs** (e.g., 85% vs 25%) | Logic-heavy, under-pipelined | Long combinational paths, timing pressure |
+| **FFs >> LUTs** (e.g., 20% vs 60%) | Over-pipelined or shift-register heavy | Probably fine, but check for wasted pipeline stages |
+| **DSPs at 0% but LUTs high** | Multiplies in fabric | LUT explosion; force DSP inference |
+| **BRAM at 100%, LUTs low** | Memory-bound design | Consider URAM, external memory, or algorithmic changes |
+| **Build time doubles with 5% more logic** | Congestion cliff | You're at the edge; optimize or upsize device |
+| **Same paths fail with different seeds** | Placement-sensitive design | Fragile timing; need headroom, not constraints |
+
+When you see these patterns, don't wait for timing to fail. Act while you have options.
 
 ---
 
@@ -99,7 +107,7 @@ LUTs can also function as distributed RAM or shift registers:
 
 ```systemverilog
 // Infers SRL32 - one LUT for 32 cycles of delay (1-bit wide)
-logic [31:0] delay_line;  // 32 deep, not 32 wide
+logic [31:0] delay_line;  // 32-stage shift register, 1-bit wide
 always_ff @(posedge clk)
     delay_line <= {delay_line[30:0], data_in};
 assign data_out = delay_line[31];
@@ -158,6 +166,8 @@ logic broadcast_reg;
 ```
 
 The duplicate registers cost FFs, which you have in abundance. The reduced fanout improves timing.
+
+The exception: control sets. Each unique combination of clock, enable, and reset creates a control set. Xilinx CLBs have limited control sets per slice. Excessive variety forces suboptimal packing and can make "free" registers expensive.
 
 ---
 
@@ -308,17 +318,165 @@ The cliff isn't exactly at these numbers. It depends on your device, clock frequ
 
 3. **Feedback loops.** Longer routes mean more delay. More delay means the placer tries different arrangements. Different arrangements may have even longer routes.
 
-**Congestion reports in Vivado:**
+---
 
-```tcl
-# After implementation
-report_design_analysis -congestion
-report_route_status -show_blocker
+## When Congestion Hits Your Timing Report
+
+The utilization report won't warn you. But the timing report will—if you know what to look for.
+
+**Route-dominated paths:**
+
+```
+  Location             Delay type                Incr(ns)  Path(ns)
+  -------------------------------------------------------------------
+  SLICE_X47Y120        net (fanout=1, routed)     0.832     4.123
+  SLICE_X89Y156        net (fanout=1, routed)     1.247     6.891
+                                                  ^^^^^
+                                          Route delay >> logic delay
 ```
 
-Quartus: Check Fitter → Resource Section → Routing Utilization, or run `report_routing_utilization`.
+When route delays dwarf logic delays on critical paths, you have congestion. A path shouldn't need 1.2 ns to route between two slices unless wires are fighting for tracks.
 
-Look for "congested" regions. If your critical paths route through congested areas, timing will fail regardless of your constraints.
+**Unexpected clock region crossings:**
+
+```
+report_timing -from [get_pins */clk] -to [get_pins */D] -max_paths 10
+
+Path crosses clock regions: X2Y1 → X0Y3 → X2Y2 → X1Y4
+```
+
+If your critical path bounces across clock regions, the placer couldn't keep logic together. This is a spatial problem, not a constraint problem.
+
+**Congestion reports:**
+
+```tcl
+# Vivado
+report_design_analysis -congestion
+
+Congestion Report
+-----------------
+Direction  Level  Regions
+---------  -----  -------
+North      5      X0Y2:X3Y2
+East       4      X2Y1:X2Y4
+Global     3      X1Y2:X2Y3   ← Critical paths likely route through here
+```
+
+```tcl
+# Quartus
+report_routing_utilization
+# Look for regions with >80% horizontal or vertical track usage
+```
+
+**What congestion looks like in `report_timing`:**
+
+```
+Slack (VIOLATED): -0.847ns
+  Source: processing/stage2/data_reg[15]/C
+  Destination: processing/stage3/result_reg[15]/D
+
+Data Path Delay:      4.847ns  (logic 1.234ns  route 3.613ns)
+                                              ^^^^^^^^^^^^
+                                              75% is routing!
+```
+
+When 70%+ of your path delay is routing, you've hit the wall. No constraint changes will help. You need fewer LUTs or a bigger device.
+
+---
+
+## Case Study: From 93% to 53%
+
+Here's how I recovered from Monday morning's disaster. Starting point: 93% LUT, 847 failing paths, 6-hour builds.
+
+**Step 1: Find the hogs**
+
+```tcl
+report_utilization -hierarchical -hierarchical_depth 3
+```
+
+```
++--------------------------------+--------+-------+
+| Instance                       | LUTs   | Util% |
++--------------------------------+--------+-------+
+| top                            | 142847 | 93.9% |
+|   packet_buffer                | 28400  | 18.7% | ← Distributed RAM
+|   processing/correlator        | 31200  | 20.5% | ← Fabric multiplies
+|   debug_mux                    | 8900   | 5.9%  | ← Debug logic
+|   addr_decode (×4 instances)   | 6200   | 4.1%  | ← Duplicated
++--------------------------------+--------+-------+
+```
+
+**Step 2: Apply targeted fixes**
+
+| Change | LUTs Before | LUTs After | Saved |
+|--------|-------------|------------|-------|
+| Move packet_buffer from distributed RAM to BRAM | 28,400 | 2,100 | 26,300 |
+| Replace fabric multiplies with DSP inference | 31,200 | 8,400 | 22,800 |
+| Remove debug MUXes (gate behind `DEBUG` parameter) | 8,900 | 0 | 8,900 |
+| Share address decoder across instances | 6,200 | 1,800 | 4,400 |
+
+**Total saved: 62,400 LUTs**
+
+**Step 3: Results**
+
+```
+Before:                          After:
+LUT utilization: 93.9%           LUT utilization: 52.9%
+WNS: -0.847 ns                   WNS: +0.892 ns
+Build time: 6.2 hours            Build time: 38 minutes
+Failing paths: 847               Failing paths: 0
+```
+
+I overshot. 53% gives room for the next feature. The packet buffer change was the biggest win—distributed RAM for a 4K×64 buffer was burning LUTs that BRAM handles for free.
+
+**The multiplier fix:**
+
+```systemverilog
+// Before: fabric multiply (tools didn't infer DSP due to width mismatch)
+logic [31:0] a, b;
+logic [63:0] product;
+assign product = a * b;  // 32×32 = 4 DSPs, but tools used fabric
+
+// After: explicit DSP-friendly width
+logic signed [26:0] a_dsp;
+logic signed [17:0] b_dsp;
+logic signed [47:0] product;
+always_ff @(posedge clk)
+    product <= a_dsp * b_dsp;  // Infers 1 DSP
+```
+
+The original code used 32-bit operands. The tools would need 4 DSPs for a full 32×32 multiply, so they fell back to fabric. Reducing to 27×18 (which fit my actual data range) gave me 1 DSP per multiply.
+
+---
+
+## Quick Wins Checklist
+
+Before upsizing the device, try these:
+
+**Memory:**
+- [ ] Any distributed RAM > 256×8? Move to BRAM.
+- [ ] Any BRAM < 256×8? Move to distributed RAM.
+- [ ] Deep shift registers (>32)? Consider BRAM-based delay line.
+
+**Arithmetic:**
+- [ ] DSP utilization low but LUTs high? Check for fabric multiplies.
+- [ ] Multiplier operands wider than 27×18? Can you reduce precision?
+- [ ] Multiply chains? Restructure for DSP cascade.
+
+**Debug/Development:**
+- [ ] Debug MUXes and ILA still instantiated? Gate behind parameter.
+- [ ] Assertion logic synthesized in? Use `translate_off`.
+- [ ] Unused module outputs? Remove dead logic.
+
+**Structure:**
+- [ ] Same logic instantiated multiple times? Share it.
+- [ ] Large one-hot state machines? Consider binary encoding.
+- [ ] Wide muxes (>16:1)? Add pipeline stage or restructure.
+
+**Timing:**
+- [ ] Route-dominated critical paths? Need fewer LUTs, not constraints.
+- [ ] Cross-clock-region paths? Consider floorplanning.
+- [ ] High fanout nets? Add `max_fanout` attribute.
 
 ---
 
@@ -384,7 +542,7 @@ Before you write RTL, estimate whether it fits:
 
 ```
 4 × 18×18 multipliers        =  4 DSPs
-2 × 4K×32 buffers            =  8 BRAM36 (each 4K×32 buffer needs 4 BRAMs cascaded)
+2 × 4K×32 buffers            =  8 BRAM36 (each 4K×32 = 131Kb → 4 BRAMs; 131Kb ÷ 36Kb ≈ 4)
 1 × 16K×8 lookup table       =  4 BRAM36
 16-stage pipeline, 256-bit   = ~4000 FFs
 Control + datapath logic     = ~15000 LUTs (estimate 3× your intuition)
@@ -474,6 +632,15 @@ When to stop and refactor:
 | 85-95% | Warning | Consider refactoring or larger device |
 | > 95% | Critical | Design likely won't close; refactor required |
 
+### Resource Smells (Quick Check)
+
+| Pattern | Meaning |
+|---------|---------|
+| LUTs >> FFs | Under-pipelined, logic-heavy |
+| DSPs = 0%, LUTs high | Fabric multiplies |
+| BRAM = 100% | Memory-bound |
+| Build time spikes | Congestion cliff |
+
 ### Estimation Formulas
 
 ```
@@ -489,26 +656,18 @@ FF count   ≈ pipeline_depth × datapath_width + control
 ```tcl
 report_utilization -hierarchical
 report_design_analysis -congestion
-report_drc -checks {SYNTH-6}  # Latch inference
 report_timing_summary -delay_type min_max
+# Check for route-dominated paths:
+report_timing -max_paths 10 -nworst 1 -input_pins
 ```
 
 **Quartus:**
 ```tcl
 report_resource_usage -hierarchy
 report_fitter_resource_usage -resource alm
+report_routing_utilization
 report_ram_utilization
 ```
-
-### Common Mistakes
-
-| Mistake | Result | Prevention |
-|---------|--------|------------|
-| Ignoring hierarchical utilization | One module hogs device | Review per-module breakdown |
-| Assuming 95% utilization works | Timing fails, builds take hours | Keep under 85% for timing margin |
-| Fabric multiply by accident | LUT explosion | Check DSP inference, operand widths |
-| Small BRAM for tiny memory | Wasted BRAM | Use distributed RAM for < 256×8 |
-| No estimation before RTL | Surprise at synthesis | Estimate first, code second |
 
 ---
 
