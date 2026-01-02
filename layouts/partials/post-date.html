@@ -1,22 +1,5 @@
 {{- $date := .Date -}}
-{{- with .Params.dateFormat -}}
-  {{- $date | time.Format . -}}
-{{- else -}}
-  {{- with .Site.Params.dateFormat -}}
-    {{- $date | time.Format . -}}
-  {{- else -}}
-    {{- $date | time.Format "2006-01-02" -}}
-  {{- end -}}
-{{- end -}}
-{{- if .Params.updated }} [Updated:
-  {{- $updatedDate := .Params.updated -}}
-  {{- with .Params.dateFormat -}}
-    {{- $updatedDate | time.Format . -}}
-  {{- else -}}
-    {{- with .Site.Params.dateFormat -}}
-      {{- $updatedDate | time.Format . -}}
-    {{- else -}}
-      {{- $updatedDate | time.Format "2006-01-02" -}}
-    {{- end -}}
-  {{- end -}}]
+{{- $date | time.Format "2006-01-02" -}}
+{{- if .Params.updated -}}
+{{- $updatedDate := .Params.updated }} [Updated: {{ $updatedDate | time.Format "2006-01-02" -}}]
 {{- end -}}
