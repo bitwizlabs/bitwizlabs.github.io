@@ -1,6 +1,7 @@
 ---
 title: "Pipelining Without Breaking Your Protocol"
 date: 2025-12-30
+updated: 2026-01-02
 draft: false
 description: "Understanding how to add pipeline registers without breaking valid/ready handshakes - skid buffers, register slices, and protocol-correct timing fixes"
 tags: ["FPGA", "pipelining", "timing", "protocols", "hardware"]
@@ -42,7 +43,7 @@ always_ff @(posedge clk) begin
 end
 ```
 
-One cycle mismatch equals one beat of garbage. The other half of "pipelining broke my design" tickets? Back-pressure. If you ignore it, you lose data.
+One cycle mismatch equals one beat of garbage. The other half of "pipelining broke my design" tickets? Backpressure. If you ignore it, you lose data.
 
 ---
 
@@ -69,6 +70,7 @@ clk      │   │   │   │   │   │   │   │   │   │   │   │
       ───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───
               _______________
 valid    ____/               \___________________________
+
                       _______
 ready    ____________/       \___________________________
 
@@ -90,6 +92,35 @@ And the invariant that protocol specs bury in fine print:
 **When valid is high and ready is low, the source must hold valid and data stable until the transfer completes.**
 
 Every pipelining strategy depends on this. Violate it and nothing works. Every slice and FIFO in this article assumes the upstream obeys "hold stable while stalled." If it doesn't, your protocol is already broken—no amount of buffering will save you.
+
+---
+
+## The Happy Path: When Stalls Don't Exist
+
+Before the complexity, here's the simplest correct pipeline stage:
+
+```systemverilog
+// Simplest correct pipeline stage
+// ONLY works when downstream NEVER stalls (ready always high)
+always_ff @(posedge clk) begin
+    if (rst) begin
+        valid_out <= 1'b0;
+    end else begin
+        valid_out <= valid_in;
+        data_out  <= data_in;
+    end
+end
+
+assign ready_out = 1'b1;  // Always accept
+```
+
+This works when `ready_in` is always high. Internal transform stages where you control both ends. Straight pipelines with no backpressure. Simple and correct.
+
+The moment downstream can stall, everything changes.
+
+When `ready_in` goes low while `valid_out` is high, you must hold `data_out` stable. But this register updates unconditionally every cycle. It overwrites data the downstream hasn't accepted yet.
+
+That's where all the complexity comes from: storage for data that's been sent but not yet received.
 
 ---
 
@@ -135,6 +166,67 @@ This is a single-entry slice. It breaks forward timing and handles backpressure 
 
 ---
 
+## The Concrete Example: CRC Calculator
+
+You have a CRC calculator with 4 LUT levels. Timing fails by -0.3 ns on the path from input to CRC output.
+
+You add a pipeline register after LUT level 2:
+
+```systemverilog
+// Stage 1: first half of CRC calculation
+always_ff @(posedge clk) begin
+    crc_partial <= crc_stage1(data_in);
+end
+
+// Stage 2: second half
+always_ff @(posedge clk) begin
+    crc_out <= crc_stage2(crc_partial);
+end
+```
+
+Timing closes. You ship. Production reports: every other packet has a bad CRC.
+
+The problem: `valid_in` still propagates combinationally while `data_in` now takes two cycles. When `valid_out` asserts, it's pointing at data from two cycles ago—but the CRC reflects only one cycle of delay.
+
+```
+         ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐
+clk      │   │   │   │   │   │   │   │   │   │
+      ───┘   └───┘   └───┘   └───┘   └───┘   └───
+
+valid_in ─────────┐ A ┌───┐ B ┌───┐ C ┌─────────
+                      │       │       │
+valid_out ────────────│───────│───────│───────── (still combinational!)
+                      │       │       │
+data_out  ────────────┤partial│partial│─────────
+                      │   A   │   B   │
+crc_out   ────────────┴───────┴───────┴───────── (2-cycle latency)
+                          ↑
+                          └── valid_out points here, but CRC is for PREVIOUS beat
+```
+
+**The fix:** Pipeline `valid` with the same latency as the data path:
+
+```systemverilog
+// Valid pipeline matches data pipeline depth
+logic valid_d1, valid_d2;
+
+always_ff @(posedge clk) begin
+    if (rst) begin
+        valid_d1 <= 1'b0;
+        valid_d2 <= 1'b0;
+    end else begin
+        valid_d1 <= valid_in;
+        valid_d2 <= valid_d1;
+    end
+end
+
+assign valid_out = valid_d2;  // Now aligned with crc_out
+```
+
+Every signal must have the same pipeline depth. Valid, data, CRC, and any sidebands. No exceptions.
+
+---
+
 ## The Backward Path: Why Registering Ready Breaks
 
 You can't just register `ready` without storage:
@@ -163,6 +255,37 @@ ready_out ___________/       \___________________ <- Upstream sees it late
 ```
 
 Registering ready is fine *if* you add storage for the in-flight beat. That's what a skid buffer provides.
+
+---
+
+## Which Structure Do I Need?
+
+Before diving into implementations, here's how to choose:
+
+```
+Does downstream ever stall (ready goes low)?
+│
+├─ No  → Simple registered stage (no storage needed)
+│        Use "The Happy Path" code above
+│
+└─ Yes → Do you need to break FORWARD timing (valid/data path)?
+         │
+         ├─ No  → Bypass skid buffer
+         │        Handles backpressure only
+         │        Forward path is still combinational
+         │
+         └─ Yes → Do you need to break BACKWARD timing (ready path)?
+                  │
+                  ├─ No  → Single-entry register slice
+                  │        The "accept = ready || !valid" pattern
+                  │        Ready is still combinational
+                  │
+                  └─ Yes → 2-entry FIFO or vendor register slice
+                           Fully registered both directions
+                           Use this or the vendor IP
+```
+
+Most production designs end up at the bottom: 2-entry FIFO or vendor IP. But knowing the progression helps you understand why.
 
 ---
 
@@ -328,22 +451,35 @@ endmodule
 
 **Cycle-by-cycle under alternating ready** (valid_in always high, presenting A, B, C, D, E, F):
 
-This FIFO is not fall-through: an input transfer loads `q0` on the clock edge, and `valid_out` asserts in the following cycle. `push` is the upstream transfer (`valid_in && ready_out`)—it can happen even when the sink is stalled because the FIFO is absorbing data.
+This FIFO is not fall-through: an input transfer loads `q0` on the clock edge, and `valid_out` asserts in the following cycle.
 
-Note: `data_out` may change internally even when the sink is not accepting, but it must remain stable whenever `valid_out && !ready_in`. The SVA assertions later in this article verify exactly that property.
+```
+         ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐
+clk      │   │   │   │   │   │   │   │   │   │   │   │   │   │
+      ───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───
+              _________________________________________________
+valid_in     /                                                 \
 
-Values shown are pre-clock-edge state for each cycle.
+          _______         _______         _______         _______
+ready_in /       \_______/       \_______/       \_______/
+          _____________________________________________________
+valid_out     /                                                 \
+                  (invalid)
+                      ^           ^           ^           ^
+                      │           │           │           │
+                      A xfer      B xfer      C xfer      D xfer
 
-| Cycle | ready_in | count | q0 | pop | push | data_out | Transfer? |
-|-------|----------|-------|-----|-----|------|----------|-----------|
-| 0     | 1        | 0     | —   | 0   | 1    | — (invalid) | No |
-| 1     | 0        | 1     | A   | 0   | 1    | A        | No (ready=0) |
-| 2     | 1        | 2     | A   | 1   | 1    | A        | Yes |
-| 3     | 0        | 2     | B   | 0   | 0    | B        | No |
-| 4     | 1        | 2     | B   | 1   | 1    | B        | Yes |
-| 5     | 0        | 2     | C   | 0   | 0    | C        | No |
+data_out ────< ? ><  A  ><  A  ><  B  ><  B  ><  C  ><  C  ><  D  >
+                          held        held        held
 
-Key insight: In cycles 2 and 4, `ready_out = (count != 2) || pop = 0 || 1 = 1`. We can push and pop in the same cycle, avoiding drain bubbles.
+count    ──< 0 ><  1  ><  2  ><  2  ><  2  ><  2  ><  2  ><  2  >
+                              ↑           ↑           ↑
+                              │           │           └── push+pop: count stays 2
+                              │           └── push+pop: count stays 2
+                              └── FIFO full, but pop enables push
+```
+
+Key insight: When `count == 2` and `ready_in` goes high, `pop` is true, so `ready_out = (count != 2) || pop = 0 || 1 = 1`. We push and pop simultaneously, avoiding drain bubbles.
 
 With `ready_in` alternating 1/0, sink throughput is 50% by definition—the sink only accepts on half the cycles. The FIFO's advantage is that it keeps accepting from upstream on pop cycles even when full, avoiding extra bubbles beyond what the sink forces.
 
@@ -380,36 +516,6 @@ assert property (valid_until_accepted);
 
 For signals with sidebands (AXI-Stream's `tlast`, `tkeep`, `tuser`), either assert each separately or pack them into a struct and assert stability on the struct. Replace `valid_out` with `m_axis_tvalid`, `ready_in` with `m_axis_tready`.
 
-**No-drop, no-dup check**: The stability assertions prove "no corruption while stalled." They don't prove "every input shows up exactly once at the output." For that, add a transfer counter with a deterministic immediate assertion:
-
-```systemverilog
-// Conservation of transfers: output count never exceeds input count
-int in_xfers, out_xfers;
-
-always_ff @(posedge clk) begin
-    if (rst) begin
-        in_xfers  <= 0;
-        out_xfers <= 0;
-    end else begin
-        int in_next  = in_xfers  + ((valid_in  && ready_out) ? 1 : 0);
-        int out_next = out_xfers + ((valid_out && ready_in)  ? 1 : 0);
-
-        // No duplicates: output can never get ahead of input
-        if (out_next > in_next) $fatal("Duplicate detected: out_xfers > in_xfers");
-
-        in_xfers  <= in_next;
-        out_xfers <= out_next;
-    end
-end
-
-// At end of test, verify no drops
-final begin
-    if (in_xfers != out_xfers) $fatal("Drop detected: in_xfers != out_xfers");
-end
-```
-
-This proves conservation of transfers. For ordering, stamp an incrementing ID at input and verify output IDs arrive in sequence.
-
 ---
 
 ## The Timing Connection
@@ -434,7 +540,7 @@ Article 3 showed why a pipeline register can make timing worse. Here's how that 
 | Pipeline `valid` but not `data` | Downstream captures garbage | Always register together |
 | Register `ready` without storage | Data lost during backpressure | Use skid buffer or FIFO |
 | Bypass skid on timing-critical path | Forward path still combinational | Use 2-entry FIFO |
-| Update output unconditionally | Overwrites data during stall | Gate on `ready \|\| !valid` |
+| Update output unconditionally | Overwrites data during stall | Gate on `ready` ‖ `!valid` |
 | Pipeline depth mismatch | Control and data desynchronize | Audit pipeline depths |
 | Forget to pipeline sideband | `last`, `keep`, `user` out of sync | Include ALL signals |
 
@@ -557,6 +663,12 @@ When pipelining breaks something:
 **The fundamental rule**: A transfer happens when `valid && ready`. Both must see the same data on that edge.
 
 **Protocol invariant**: When `valid && !ready`, the source must hold `valid` and `data` stable.
+
+**Decision tree**:
+- No stalls → Simple registered stage
+- Stalls, no forward timing issue → Bypass skid buffer
+- Stalls, forward timing issue, ready can be combinational → Single-entry slice
+- Stalls, forward timing issue, need full isolation → 2-entry FIFO or vendor IP
 
 **Forward path (valid + data)**: Gate updates on `ready || !valid`. This breaks timing.
 
