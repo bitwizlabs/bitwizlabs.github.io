@@ -11,7 +11,7 @@ theme = "hugo-theme-terminal"
 [params]
   # Terminal theme settings
   themeColor = "green"
-  showMenuItems = 3
+  showMenuItems = 4
   fullWidthTheme = false
   centerTheme = true
 
@@ -47,6 +47,11 @@ theme = "hugo-theme-terminal"
     identifier = "about"
     name = "about"
     url = "/about/"
+    weight = 3
+  [[menu.main]]
+    identifier = "rss"
+    name = "rss"
+    url = "/index.xml"
     weight = 4
 
 # Syntax highlighting configuration
@@ -71,3 +76,7 @@ theme = "hugo-theme-terminal"
 [taxonomies]
   tag = "tags"
   category = "categories"
+
+# RSS feed configuration
+[services.rss]
+  limit = 20
