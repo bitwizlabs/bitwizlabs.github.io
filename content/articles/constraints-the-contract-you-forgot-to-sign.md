@@ -1,6 +1,6 @@
 ---
 title: "Constraints: The Contract You Forgot to Sign"
-date: 2025-12-23
+date: 2025-12-23T15:04:00Z
 draft: false
 description: "Understanding FPGA timing constraints - clocks, I/O delays, CDC, and why 'Timing Met' means nothing without proper constraints"
 tags: ["FPGA", "timing", "constraints", "CDC", "hardware"]

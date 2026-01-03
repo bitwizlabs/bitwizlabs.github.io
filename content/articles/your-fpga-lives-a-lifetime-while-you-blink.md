@@ -1,6 +1,6 @@
 ---
 title: "Your FPGA Lives a Lifetime While You Blink"
-date: 2025-12-22
+date: 2025-12-22T07:15:00Z
 draft: false
 description: "Understanding FPGA timing at 156.25 MHz - where half a nanosecond means the difference between working and failing"
 tags: ["FPGA", "timing", "10GbE", "hardware"]

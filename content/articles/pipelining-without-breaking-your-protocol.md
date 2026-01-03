@@ -1,6 +1,6 @@
 ---
 title: "Pipelining Without Breaking Your Protocol"
-date: 2025-12-30
+date: 2025-12-30T05:20:00Z
 updated: 2026-01-02
 draft: false
 description: "Understanding how to add pipeline registers without breaking valid/ready handshakes - skid buffers, register slices, and protocol-correct timing fixes"

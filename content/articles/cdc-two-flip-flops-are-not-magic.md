@@ -1,6 +1,6 @@
 ---
 title: "CDC: Two Flip-Flops Are Not Magic"
-date: 2026-01-02
+date: 2026-01-02T05:19:00Z
 draft: false
 description: "Understanding clock domain crossing - synchronizers, metastability, pulse transfer, gray code, and why 2-flop sync only works for levels"
 tags: ["FPGA", "CDC", "timing", "metastability", "hardware"]

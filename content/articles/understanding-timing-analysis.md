@@ -1,6 +1,6 @@
 ---
 title: "Understanding Timing Analysis"
-date: 2025-12-28
+date: 2025-12-28T05:25:00Z
 draft: false
 description: "A deep dive into static timing analysis - understanding slack, path delays, clock skew, and why period minus data path is not your margin"
 tags: ["FPGA", "timing", "STA", "hardware"]
