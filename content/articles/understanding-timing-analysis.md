@@ -7,7 +7,7 @@ tags: ["FPGA", "timing", "STA", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 2 of 5*
+*Timing Series: Part 2 of 6*
 
 *Previous: [Constraints: The Contract You Forgot to Sign](/articles/constraints-the-contract-you-forgot-to-sign/)*
 
@@ -619,3 +619,4 @@ That's the difference between debugging and guessing.
 3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) - How to fix violations
 4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) - How to manage resources
 5. [CDC: Two Flip-Flops Are Not Magic](/articles/cdc-two-flip-flops-are-not-magic/) - How to cross clock domains
+6. [Resets: The Timing Event You Forgot](/articles/resets-the-timing-event-you-forgot/) - How to handle resets

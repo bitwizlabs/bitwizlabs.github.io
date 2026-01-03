@@ -13,7 +13,7 @@ Each article's `<pubDate>` time (HH:MM) encodes two letters:
 
 **"GOOD EYE TIMESTAMP SLEUTH"**
 
-## Published Articles (0-5)
+## Published Articles (0-6)
 
 | Article | Title | Letters | Time | Date |
 |---------|-------|---------|------|------|
@@ -23,12 +23,12 @@ Each article's `<pubDate>` time (HH:MM) encodes two letters:
 | 3 | Pipelining Without Breaking Your Protocol | ET | `05:20:00` | 2025-12-30 |
 | 4 | Silicon Real Estate: Your Resource Budget | IM | `09:13:00` | 2025-12-31 |
 | 5 | CDC: Two Flip-Flops Are Not Magic | ES | `05:19:00` | 2026-01-02 |
+| 6 | Resets: The Timing Event You Forgot | TA | `20:01:00` | 2026-01-03 |
 
-## Future Articles (6-10)
+## Future Articles (7-10)
 
 | Article | Letters | Time |
 |---------|---------|------|
-| 6 | TA | `20:01:00` |
 | 7 | MP | `13:16:00` |
 | 8 | SL | `19:12:00` |
 | 9 | EU | `05:21:00` |

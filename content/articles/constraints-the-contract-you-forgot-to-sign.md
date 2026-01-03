@@ -7,7 +7,7 @@ tags: ["FPGA", "timing", "constraints", "CDC", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 1 of 5*
+*Timing Series: Part 1 of 6*
 
 *Previous: [Your FPGA Lives a Lifetime While You Blink](/articles/your-fpga-lives-a-lifetime-while-you-blink/)*
 
@@ -424,3 +424,4 @@ These constraints compile but aren't correct for your board. Use the formulas an
 3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) - How to fix violations
 4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) - How to manage resources
 5. [CDC: Two Flip-Flops Are Not Magic](/articles/cdc-two-flip-flops-are-not-magic/) - How to cross clock domains
+6. [Resets: The Timing Event You Forgot](/articles/resets-the-timing-event-you-forgot/) - How to handle resets

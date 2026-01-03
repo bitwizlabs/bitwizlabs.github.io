@@ -7,7 +7,7 @@ tags: ["FPGA", "CDC", "timing", "metastability", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 5 of 5*
+*Timing Series: Part 5 of 6*
 
 *Previous: [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/)*
 
@@ -483,3 +483,4 @@ If you can't name the crossing type and the structure that handles it, you don't
 3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) - How to fix violations
 4. [Silicon Real Estate: Your Resource Budget](/articles/silicon-real-estate-your-resource-budget/) - How to manage resources
 5. **CDC: Two Flip-Flops Are Not Magic** - How to cross clock domains *(you are here)*
+6. [Resets: The Timing Event You Forgot](/articles/resets-the-timing-event-you-forgot/) - How to handle resets

@@ -8,7 +8,7 @@ tags: ["FPGA", "resources", "utilization", "timing", "hardware"]
 categories: ["articles"]
 ---
 
-*Timing Series: Part 4 of 5*
+*Timing Series: Part 4 of 6*
 
 *Previous: [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/)*
 
@@ -686,3 +686,4 @@ The utilization report gives you one number. Reality is a spatial puzzle of comp
 3. [Pipelining Without Breaking Your Protocol](/articles/pipelining-without-breaking-your-protocol/) - How to fix violations
 4. **Silicon Real Estate: Your Resource Budget** - How to manage resources *(you are here)*
 5. [CDC: Two Flip-Flops Are Not Magic](/articles/cdc-two-flip-flops-are-not-magic/) - How to cross clock domains
+6. [Resets: The Timing Event You Forgot](/articles/resets-the-timing-event-you-forgot/) - How to handle resets
