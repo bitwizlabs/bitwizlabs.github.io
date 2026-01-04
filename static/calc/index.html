@@ -71,7 +71,11 @@
                 <h4>Burst Length</h4>
                 <p><strong>What:</strong> Worst-case number of consecutive words written without pause (back-to-back write cycles).</p>
                 <p><strong>Why:</strong> FIFO must hold a full burst plus words accumulated during the burst while the reader catches up.</p>
-                <p><strong>Find it:</strong> Protocol spec: AXI4 AWLEN+1 (max 256), AXI3 max 16, Ethernet MTU/word_width. For variable bursts, use worst-case.</p>
+                <p><strong>Find it:</strong><br>
+                  • AXI4: AWLEN+1 (max 256)<br>
+                  • AXI3: max 16<br>
+                  • Ethernet: MTU/word_width<br>
+                  For variable bursts, use worst-case.</p>
               </span>
             </span>
           </label>
@@ -86,7 +90,10 @@
                 <h4>Read Start Latency</h4>
                 <p><strong>What:</strong> Write-clock cycles before the read side starts draining after the first write.</p>
                 <p><strong>Why:</strong> Words accumulate during this delay. Includes CDC synchronizer latency, empty/full flag propagation, and downstream ready handshaking.</p>
-                <p><strong>Find it:</strong> Async FIFO: 2-4 cycles for gray-code sync. Add 1-2 for control logic. Conservative: 4-8. Sync FIFO: typically 1-2.</p>
+                <p><strong>Find it:</strong><br>
+                  • Async FIFO: 2-4 cycles (gray-code sync) + 1-2 (control logic)<br>
+                  • Sync FIFO: 1-2 cycles<br>
+                  • Conservative estimate: 4-8 cycles</p>
               </span>
             </span>
           </label>
@@ -224,7 +231,10 @@
                 <h4>Metastability Window (T0)</h4>
                 <p><strong>What:</strong> Time aperture around the clock edge where data transitions cause metastability - essentially the setup + hold region.</p>
                 <p><strong>Why:</strong> Appears in MTBF denominator. Wider window = higher probability of capturing a transition during the vulnerable period.</p>
-                <p><strong>Find it:</strong> Device datasheet or use ~50ps for modern FPGAs. Xilinx 7-series: ~40-60ps, UltraScale: ~30-50ps. Intel: ~50-70ps.</p>
+                <p><strong>Find it:</strong> Device datasheet, or typical values:<br>
+                  • Xilinx 7-series: 40-60 ps<br>
+                  • Xilinx UltraScale: 30-50 ps<br>
+                  • Intel: 50-70 ps</p>
               </span>
             </span>
           </label>
@@ -239,7 +249,10 @@
                 <h4>Metastability Time Constant</h4>
                 <p><strong>What:</strong> Time constant of the flip-flop's regenerative feedback loop. Metastability resolves as exp(-t/τ).</p>
                 <p><strong>Why:</strong> In MTBF exponent: each τ of resolution time improves MTBF by e (~2.7x). Smaller τ = faster resolution = exponentially better reliability.</p>
-                <p><strong>Find it:</strong> Device datasheet. Typically 10-30ps. Xilinx 7-series: ~20ps, UltraScale: ~15ps.</p>
+                <p><strong>Find it:</strong> Device datasheet. Typical values:<br>
+                  • Xilinx 7-series: ~20 ps<br>
+                  • Xilinx UltraScale: ~15 ps<br>
+                  • General range: 10-30 ps</p>
               </span>
             </span>
           </label>
@@ -814,7 +827,10 @@
                 <h4>VCO Minimum Frequency</h4>
                 <p><strong>What:</strong> Lower bound of the VCO operating range.</p>
                 <p><strong>Why:</strong> VCO below minimum will not lock. Only configurations with f_vco >= this value are shown.</p>
-                <p><strong>Find it:</strong> Datasheet. Xilinx 7-series/UltraScale+: 600 MHz. Intel Cyclone V: 600 MHz, Stratix 10: varies by PLL type.</p>
+                <p><strong>Find it:</strong> Datasheet. Typical minimums:<br>
+                  • Xilinx 7-series/UltraScale+: 600 MHz<br>
+                  • Intel Cyclone V: 600 MHz<br>
+                  • Intel Stratix 10: varies by PLL type</p>
               </span>
             </span>
           </label>
@@ -829,7 +845,11 @@
                 <h4>VCO Maximum Frequency</h4>
                 <p><strong>What:</strong> Upper bound of the VCO operating range.</p>
                 <p><strong>Why:</strong> VCO above maximum will not lock. Configurations are filtered to keep f_vco <= this value. Speed-grade dependent.</p>
-                <p><strong>Find it:</strong> Datasheet. Xilinx 7-series: 1200-1600 MHz, UltraScale+: 1600-2400 MHz. Intel Cyclone V: 1300 MHz, Stratix 10: 1600 MHz. Check your exact speed grade.</p>
+                <p><strong>Find it:</strong> Datasheet (speed-grade dependent):<br>
+                  • Xilinx 7-series: 1200-1600 MHz<br>
+                  • Xilinx UltraScale+: 1600-2400 MHz<br>
+                  • Intel Cyclone V: 1300 MHz<br>
+                  • Intel Stratix 10: 1600 MHz</p>
               </span>
             </span>
           </label>
@@ -844,7 +864,11 @@
                 <h4>Feedback Multiplier Maximum (M)</h4>
                 <p><strong>What:</strong> Maximum value for the feedback multiplier (CLKFBOUT_MULT on Xilinx).</p>
                 <p><strong>Why:</strong> Multiplies input frequency to set VCO: f_vco = f_in x M / D. Higher M means higher VCO.</p>
-                <p><strong>Find it:</strong> Datasheet. Xilinx MMCM: 2-64, PLL: 2-64. Intel Cyclone V: 1-512, Arria 10: 1-160.</p>
+                <p><strong>Find it:</strong> Datasheet:<br>
+                  • Xilinx MMCM: 2-64<br>
+                  • Xilinx PLL: 2-64<br>
+                  • Intel Cyclone V: 1-512<br>
+                  • Intel Arria 10: 1-160</p>
               </span>
             </span>
           </label>
@@ -859,7 +883,11 @@
                 <h4>Input Divider Maximum (D)</h4>
                 <p><strong>What:</strong> Maximum value for input clock divider (DIVCLK_DIVIDE on Xilinx).</p>
                 <p><strong>Why:</strong> Divides input before the multiplier: PFD = f_in / D. Low PFD increases jitter; keep above 10 MHz.</p>
-                <p><strong>Find it:</strong> Datasheet. Xilinx MMCM: 1-106, PLL: 1-56. Intel Cyclone V: 1-512, Arria 10: 1-32.</p>
+                <p><strong>Find it:</strong> Datasheet:<br>
+                  • Xilinx MMCM: 1-106<br>
+                  • Xilinx PLL: 1-56<br>
+                  • Intel Cyclone V: 1-512<br>
+                  • Intel Arria 10: 1-32</p>
               </span>
             </span>
           </label>
@@ -874,7 +902,11 @@
                 <h4>Output Divider Maximum (O)</h4>
                 <p><strong>What:</strong> Maximum value for output clock divider (CLKOUT_DIVIDE on Xilinx).</p>
                 <p><strong>Why:</strong> Divides VCO to produce output: f_out = f_vco / O. Each output can use a different O value.</p>
-                <p><strong>Find it:</strong> Datasheet. Xilinx MMCM: 1-128, PLL: 1-128. Intel Cyclone V: 1-512, Arria 10: 1-512.</p>
+                <p><strong>Find it:</strong> Datasheet:<br>
+                  • Xilinx MMCM: 1-128<br>
+                  • Xilinx PLL: 1-128<br>
+                  • Intel Cyclone V: 1-512<br>
+                  • Intel Arria 10: 1-512</p>
               </span>
             </span>
           </label>
