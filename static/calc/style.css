@@ -1,0 +1,607 @@
+/* Terminal aesthetic for FPGA calculators */
+
+:root {
+  --bg: #0a0a0a;
+  --bg-light: #1a1a1a;
+  --bg-lighter: #2a2a2a;
+  --text: #b0b0b0;
+  --text-bright: #e0e0e0;
+  --accent: #00ff88;
+  --accent-dim: #00aa55;
+  --warning: #ffaa00;
+  --error: #ff4444;
+  --border: #333;
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding: 2rem 0 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+header h1 {
+  color: var(--accent);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+
+header h1::before {
+  content: '> ';
+  color: var(--text);
+}
+
+.tagline {
+  color: var(--text);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* Tab navigation */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  background: var(--bg-lighter);
+  color: var(--text-bright);
+}
+
+.tab.active {
+  background: var(--accent-dim);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+/* Calculator sections */
+.calculator {
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+
+.calculator.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.calculator h2 {
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+
+.calculator h2::before {
+  content: '# ';
+  color: var(--text);
+}
+
+.description {
+  color: var(--text);
+  font-size: 0.85rem;
+  margin-bottom: 0;
+  opacity: 0.8;
+}
+
+/* Calculator header with reset button */
+.calc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.calc-header > div {
+  flex: 1;
+}
+
+.reset-btn {
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.35rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.reset-btn:hover {
+  background: var(--bg-lighter);
+  border-color: var(--accent-dim);
+  color: var(--text-bright);
+}
+
+.reset-btn:active {
+  background: var(--accent-dim);
+  color: var(--bg);
+}
+
+/* Preset selector */
+.preset-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-dim);
+}
+
+.preset-selector label {
+  color: var(--text);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.preset-selector select {
+  flex: 1;
+  max-width: 300px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-bright);
+  padding: 0.4rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.preset-selector select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.preset-selector select option {
+  background: var(--bg);
+  color: var(--text-bright);
+}
+
+.preset-selector select optgroup {
+  color: var(--accent);
+  font-style: normal;
+}
+
+/* Input groups */
+.inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.input-group label {
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.input-group input[type="number"],
+.input-group input[type="text"] {
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  color: var(--text-bright);
+  padding: 0.5rem;
+  font-family: inherit;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.input-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+  accent-color: var(--accent);
+}
+
+.input-group label:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Results */
+.results {
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.results h3 {
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.copy-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.3rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: var(--bg-lighter);
+  border-color: var(--accent);
+  color: var(--text-bright);
+}
+
+.copy-btn.copied {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.copy-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.result-row:last-child {
+  border-bottom: none;
+}
+
+.result-label {
+  color: var(--text);
+}
+
+.result-value {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.result-value.warning {
+  color: var(--warning);
+}
+
+.result-value.error {
+  color: var(--error);
+}
+
+.result-warning {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(255, 170, 0, 0.1);
+  border-left: 3px solid var(--warning);
+  color: var(--warning);
+  font-size: 0.85rem;
+}
+
+/* Formula display */
+.formula {
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-dim);
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+
+.formula h3 {
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.formula code {
+  display: block;
+  color: var(--text-bright);
+  font-size: 0.9rem;
+  padding: 0.25rem 0;
+}
+
+/* PLL results table */
+.pll-results {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.pll-results table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.pll-results th,
+.pll-results td {
+  padding: 0.5rem;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+
+.pll-results th {
+  color: var(--text);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.pll-results td {
+  color: var(--text-bright);
+}
+
+.pll-results tr:hover td {
+  background: var(--bg-lighter);
+}
+
+.pll-results .exact {
+  color: var(--accent);
+}
+
+.pll-results .placeholder {
+  color: var(--text);
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.pll-results .no-results {
+  color: var(--warning);
+}
+
+.pll-results .pfd-warning td {
+  opacity: 0.6;
+}
+
+.pll-results .pfd-note {
+  color: var(--warning);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 2rem 0 1rem;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+footer a {
+  color: var(--accent-dim);
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: var(--accent);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text);
+}
+
+/* Help tooltips */
+.input-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-lighter);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: bold;
+  cursor: help;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.help-icon:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.help-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.help-tooltip {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  max-width: 90vw;
+  background: var(--bg-light);
+  border: 1px solid var(--accent-dim);
+  padding: 1rem;
+  padding-top: 1.5rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+}
+
+.tooltip-close {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+
+.tooltip-close:hover {
+  color: var(--accent);
+}
+
+.help-wrapper:hover .help-tooltip:not(.closed),
+.help-tooltip.active:not(.closed) {
+  display: block;
+}
+
+.help-tooltip h4 {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.help-tooltip p {
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.help-tooltip p:last-child {
+  margin-bottom: 0;
+}
+
+.help-tooltip strong {
+  color: var(--text-bright);
+}
+
+.help-tooltip code {
+  background: var(--bg);
+  padding: 0.1rem 0.3rem;
+  font-size: 0.75rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  body {
+    font-size: 13px;
+    padding: 0.5rem;
+  }
+
+  .tabs {
+    gap: 0.25rem;
+  }
+
+  .tab {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .inputs {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 1.2rem;
+  }
+
+  /* Preset selector mobile */
+  .preset-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .preset-selector select {
+    max-width: none;
+  }
+}

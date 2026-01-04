@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>bitwiz calc</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>bitwiz calc</h1>
+    <p class="tagline">Interactive calculators for FPGA engineers</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Calculator selection">
+    <button class="tab active" data-calc="fifo" role="tab" aria-selected="true" aria-controls="fifo">FIFO Depth</button>
+    <button class="tab" data-calc="cdc" role="tab" aria-selected="false" aria-controls="cdc">CDC MTBF</button>
+    <button class="tab" data-calc="timing" role="tab" aria-selected="false" aria-controls="timing">Timing Budget</button>
+    <button class="tab" data-calc="fixedpoint" role="tab" aria-selected="false" aria-controls="fixedpoint">Fixed-Point</button>
+    <button class="tab" data-calc="pll" role="tab" aria-selected="false" aria-controls="pll">PLL Config</button>
+  </nav>
+
+  <main>
+    <!-- FIFO Depth Calculator -->
+    <section id="fifo" class="calculator active">
+      <div class="calc-header">
+        <div>
+          <h2>FIFO Depth Calculator</h2>
+          <p class="description">Calculate minimum FIFO depth to prevent overflow/underflow</p>
+        </div>
+        <button class="reset-btn" data-calc="fifo">Reset</button>
+      </div>
+
+      <div class="inputs">
+        <div class="input-group">
+          <label for="fifo-fwrite">
+            Write Clock (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Write Clock Frequency</h4>
+                <p><strong>What:</strong> Clock frequency of the domain writing data into the FIFO.</p>
+                <p><strong>Why:</strong> Determines data ingress rate. When faster than read clock, the FIFO must buffer the rate mismatch during bursts.</p>
+                <p><strong>Find it:</strong> Check constraints (<code>create_clock</code>) for the write port clock. Common: 100-250 MHz for AXI, 125/156.25 MHz for Ethernet.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="fifo-fwrite" value="100" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="fifo-fread">
+            Read Clock (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Read Clock Frequency</h4>
+                <p><strong>What:</strong> Clock frequency of the domain reading data from the FIFO.</p>
+                <p><strong>Why:</strong> When slower than write clock, data accumulates during bursts - the rate difference determines extra depth needed.</p>
+                <p><strong>Find it:</strong> Check constraints for the read port clock. May be same as write (synchronous FIFO) or different (async FIFO for CDC).</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="fifo-fread" value="80" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="fifo-burst">
+            Burst Length (words)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Burst Length</h4>
+                <p><strong>What:</strong> Worst-case number of consecutive words written without pause (back-to-back write cycles).</p>
+                <p><strong>Why:</strong> FIFO must hold a full burst plus words accumulated during the burst while the reader catches up.</p>
+                <p><strong>Find it:</strong> Protocol spec: AXI4 AWLEN+1 (max 256), AXI3 max 16, Ethernet MTU/word_width. For variable bursts, use worst-case.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="fifo-burst" value="256" min="1" step="1">
+        </div>
+        <div class="input-group">
+          <label for="fifo-latency">
+            Read Latency (cycles)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Read Start Latency</h4>
+                <p><strong>What:</strong> Write-clock cycles before the read side starts draining after the first write.</p>
+                <p><strong>Why:</strong> Words accumulate during this delay. Includes CDC synchronizer latency, empty/full flag propagation, and downstream ready handshaking.</p>
+                <p><strong>Find it:</strong> Async FIFO: 2-4 cycles for gray-code sync. Add 1-2 for control logic. Conservative: 4-8. Sync FIFO: typically 1-2.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="fifo-latency" value="4" min="0" step="1">
+        </div>
+      </div>
+
+      <div class="results" id="fifo-results" aria-live="polite">
+        <div class="results-header">
+          <h3>Results</h3>
+          <button class="copy-btn" data-calc="fifo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Minimum Depth
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Minimum FIFO Depth</h4>
+                <p><strong>What:</strong> Theoretical minimum words to prevent overflow during worst-case burst. Does not include safety margin.</p>
+                <p><strong>Why it matters:</strong> Going below this risks overflow and data loss. This is the absolute floor - any less and bursts will be dropped.</p>
+                <p><strong>How to use:</strong> Reference value for analysis. For implementation, use the Power of 2 value below - it provides margin and maps efficiently to BRAM.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="fifo-min-depth" aria-label="Minimum FIFO depth">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Power of 2
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Power of 2 Depth</h4>
+                <p><strong>What:</strong> Minimum depth rounded up to nearest power of 2 (e.g., 320 → 512).</p>
+                <p><strong>Why it matters:</strong> Power-of-2 depths enable simple pointer wrap-around via bit truncation, map efficiently to BRAMs, and are required by most FIFO IP generators.</p>
+                <p><strong>How to use:</strong> Use in RTL: <code>localparam DEPTH = 512;</code>. The headroom above minimum provides margin for timing variations and burst irregularities.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="fifo-pow2-depth" aria-label="Power of 2 depth">--</span>
+        </div>
+        <div id="fifo-warning" class="result-warning" style="display: none;"></div>
+      </div>
+
+      <div class="formula">
+        <h3>
+          Formula
+          <span class="help-wrapper">
+            <span class="help-icon">?</span>
+            <span class="help-tooltip">
+              <h4>FIFO Depth Formula</h4>
+              <p><strong>burst:</strong> Number of words written in one burst.</p>
+              <p><strong>burst x (f_write - f_read) / f_read:</strong> Rate mismatch factor: extra words that pile up because writer is faster than reader during the burst.</p>
+              <p><strong>latency:</strong> Words written during the startup delay before the reader begins draining.</p>
+              <p><strong>Note:</strong> Assumes bursty traffic with idle gaps between bursts. Continuous streaming where f_write > f_read will always overflow - backpressure or buffering is required.</p>
+            </span>
+          </span>
+        </h3>
+        <code>depth = burst + burst × (f_write - f_read) / f_read + latency</code>
+      </div>
+    </section>
+
+    <!-- CDC MTBF Calculator -->
+    <section id="cdc" class="calculator">
+      <div class="calc-header">
+        <div>
+          <h2>CDC MTBF Calculator</h2>
+          <p class="description">Metastability analysis for clock domain crossing synchronizers</p>
+        </div>
+        <button class="reset-btn" data-calc="cdc">Reset</button>
+      </div>
+
+      <div class="preset-selector">
+        <label for="cdc-preset">Device Preset:</label>
+        <select id="cdc-preset">
+          <option value="">-- Select Device --</option>
+          <optgroup label="Xilinx/AMD">
+            <option value="xilinx-7series">Xilinx 7-Series</option>
+            <option value="xilinx-ultrascale">Xilinx UltraScale</option>
+            <option value="xilinx-ultrascale+">Xilinx UltraScale+</option>
+          </optgroup>
+          <optgroup label="Intel/Altera">
+            <option value="intel-cyclone-v">Intel Cyclone V</option>
+            <option value="intel-cyclone-10">Intel Cyclone 10</option>
+            <option value="intel-arria-10">Intel Arria 10</option>
+            <option value="intel-stratix-10">Intel Stratix 10</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="inputs">
+        <div class="input-group">
+          <label for="cdc-fdata">
+            Data Clock (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Data Clock Frequency</h4>
+                <p><strong>What:</strong> Clock frequency of the source domain whose signal crosses to the destination.</p>
+                <p><strong>Why:</strong> Appears in MTBF denominator. Higher frequency = more signal transitions = more opportunities for metastability per second.</p>
+                <p><strong>Find it:</strong> The clock driving the register whose output enters the synchronizer chain.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="cdc-fdata" value="100" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="cdc-fsample">
+            Sampling Clock (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Sampling Clock Frequency</h4>
+                <p><strong>What:</strong> Clock frequency of the destination domain capturing the signal.</p>
+                <p><strong>Why:</strong> Dual effect: higher frequency means more sampling events (in MTBF denominator), but also determines resolution time per stage (T_clk - t_setup).</p>
+                <p><strong>Find it:</strong> The clock driving your synchronizer flip-flops in the destination domain.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="cdc-fsample" value="125" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="cdc-twindow">
+            Metastability Window (ps)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Metastability Window (T0)</h4>
+                <p><strong>What:</strong> Time aperture around the clock edge where data transitions cause metastability - essentially the setup + hold region.</p>
+                <p><strong>Why:</strong> Appears in MTBF denominator. Wider window = higher probability of capturing a transition during the vulnerable period.</p>
+                <p><strong>Find it:</strong> Device datasheet or use ~50ps for modern FPGAs. Xilinx 7-series: ~40-60ps, UltraScale: ~30-50ps. Intel: ~50-70ps.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="cdc-twindow" value="50" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="cdc-tau">
+            Time Constant τ (ps)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Metastability Time Constant</h4>
+                <p><strong>What:</strong> Time constant of the flip-flop's regenerative feedback loop. Metastability resolves as exp(-t/τ).</p>
+                <p><strong>Why:</strong> In MTBF exponent: each τ of resolution time improves MTBF by e (~2.7x). Smaller τ = faster resolution = exponentially better reliability.</p>
+                <p><strong>Find it:</strong> Device datasheet. Typically 10-30ps. Xilinx 7-series: ~20ps, UltraScale: ~15ps.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="cdc-tau" value="20" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="cdc-stages">
+            Sync Stages
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Synchronizer Stages</h4>
+                <p><strong>What:</strong> Number of flip-flops in your synchronizer chain.</p>
+                <p><strong>Why:</strong> Each stage adds ~T_clk of resolution time to the exponent. Going from 2 to 3 stages typically improves MTBF by 10^10x or more. Costs 1 cycle latency per stage.</p>
+                <p><strong>Find it:</strong> Check your RTL. Standard is 2, use 3 for high-reliability or fast clocks.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="cdc-stages" value="2" min="1" max="5" step="1">
+        </div>
+        <div class="input-group">
+          <label for="cdc-tsetup">
+            Setup Time (ns)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Flip-Flop Setup Time</h4>
+                <p><strong>What:</strong> Setup time of each synchronizer flip-flop. Data must be stable this long before the capturing edge.</p>
+                <p><strong>Why:</strong> Subtracted from each clock period when calculating resolution time: t_resolve = stages × (T_clk - t_setup). Smaller is better.</p>
+                <p><strong>Find it:</strong> Device datasheet, timing report, or ~0.05-0.15ns for modern FPGAs.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="cdc-tsetup" value="0.1" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="cdc-trouting">
+            Routing Delay (ns)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Inter-Stage Routing Delay</h4>
+                <p><strong>What:</strong> Wire delay between synchronizer flip-flops. Subtracted from each clock period along with setup time.</p>
+                <p><strong>Why:</strong> Reduces available resolution time: t_resolve = stages × (T_clk - t_setup - t_routing). Tight placement minimizes this.</p>
+                <p><strong>Find it:</strong> Timing report inter-register routing. Typical: 0.2-0.5 ns. Use ASYNC_REG to keep stages close. Conservative default: 0.3 ns.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="cdc-trouting" value="0.3" min="0" step="any">
+        </div>
+      </div>
+
+      <div class="results" id="cdc-results" aria-live="polite">
+        <div class="results-header">
+          <h3>Results</h3>
+          <button class="copy-btn" data-calc="cdc">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Resolution Time
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Total Resolution Time</h4>
+                <p><strong>What:</strong> Total time for metastability to resolve: stages × (T_clk - t_setup). This goes in the MTBF exponent.</p>
+                <p><strong>Why it matters:</strong> Appears in the MTBF exponent (exp(t_resolve/τ)). Each additional τ of time multiplies MTBF by ~2.7x. With τ ~20ps, each extra nanosecond improves MTBF by ~10^20x.</p>
+                <p><strong>How to use:</strong> Should be many multiples of τ. If t_resolve/τ > 30, MTBF is astronomical. If t_resolve/τ < 15, consider adding stages or using a slower sampling clock.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="cdc-tresolve" aria-label="Resolution time">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            MTBF
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Mean Time Between Failures</h4>
+                <p><strong>What:</strong> Expected time between metastability-induced failures for this synchronizer. Failures follow a Poisson process, so actual time to failure is exponentially distributed.</p>
+                <p><strong>Why it matters:</strong> Your reliability metric. Industry standard: > 1000 years per synchronizer. For 1000 units in field, divide by 1000.</p>
+                <p><strong>How to use:</strong> > 10^9 years = excellent. > 1000 years = acceptable. < 100 years = marginal. < 1 year = add more stages immediately.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="cdc-mtbf" aria-label="Mean time between failures">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Recommendation
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Design Recommendation</h4>
+                <p><strong>What:</strong> Quick assessment of whether your synchronizer design is adequate.</p>
+                <p><strong>Why it matters:</strong> Actionable guidance - tells you if design will be reliable in production.</p>
+                <p><strong>How to use:</strong> "Excellent" (>10^9 yrs) = ship it. "OK" (>1000 yrs) = acceptable. "Marginal" = add stages for safety. "Poor" (<100 yrs) = will likely fail in production.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="cdc-recommendation" aria-label="Recommendation">--</span>
+        </div>
+      </div>
+
+      <div class="formula">
+        <h3>
+          Formula
+          <span class="help-wrapper">
+            <span class="help-icon">?</span>
+            <span class="help-tooltip">
+              <h4>MTBF Formula (Dally & Poulton)</h4>
+              <p><strong>exp(t_resolve / τ):</strong> Resolution factor in the numerator. Each additional τ of resolution time multiplies MTBF by e (~2.7x). This is why longer resolution time is so powerful.</p>
+              <p><strong>f_data × f_sample:</strong> Rate of potentially metastable events. Higher frequencies = more opportunities to fail.</p>
+              <p><strong>T_window:</strong> Metastability aperture around clock edge where transitions cause problems.</p>
+              <p><strong>Key insight:</strong> Adding sync stages is far more effective than slowing clocks. Each stage adds a full T_clk to the exponent, which can improve MTBF by 10^10x or more.</p>
+            </span>
+          </span>
+        </h3>
+        <code>MTBF = exp(t_resolve / τ) / (f_data × f_sample × T_window)</code>
+      </div>
+    </section>
+
+    <!-- Timing Budget Calculator -->
+    <section id="timing" class="calculator">
+      <div class="calc-header">
+        <div>
+          <h2>Timing Budget Calculator</h2>
+          <p class="description">Calculate available slack and max combinational delay</p>
+        </div>
+        <button class="reset-btn" data-calc="timing">Reset</button>
+      </div>
+
+      <div class="preset-selector">
+        <label for="timing-preset">Device Preset:</label>
+        <select id="timing-preset">
+          <option value="">-- Select Device --</option>
+          <optgroup label="Xilinx/AMD">
+            <option value="xilinx-7series">Xilinx 7-Series</option>
+            <option value="xilinx-ultrascale">Xilinx UltraScale</option>
+            <option value="xilinx-ultrascale+">Xilinx UltraScale+</option>
+          </optgroup>
+          <optgroup label="Intel/Altera">
+            <option value="intel-cyclone-v">Intel Cyclone V</option>
+            <option value="intel-cyclone-10">Intel Cyclone 10</option>
+            <option value="intel-arria-10">Intel Arria 10</option>
+            <option value="intel-stratix-10">Intel Stratix 10</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="inputs">
+        <div class="input-group">
+          <label for="timing-freq">
+            Clock Frequency (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Clock Frequency</h4>
+                <p><strong>What:</strong> Target operating frequency for the timing path. The clock period (1/frequency) sets the total time budget for register-to-register paths.</p>
+                <p><strong>Why:</strong> Higher frequency means less time for logic. At 200 MHz you have 5 ns; at 500 MHz only 2 ns. If logic delay exceeds this budget, you have negative slack and timing violations.</p>
+                <p><strong>How to find:</strong> Vivado: <code>create_clock -period</code> in XDC, or "Clock Summary" in timing reports. Quartus: <code>create_clock</code> in SDC, or TimeQuest "Clocks" panel.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="timing-freq" value="200" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="timing-tsetup">
+            Setup Time (ns)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Flip-Flop Setup Time (Tsu)</h4>
+                <p><strong>What:</strong> The minimum time data must be stable at the destination flip-flop's D input before the capturing clock edge arrives. Violating setup time causes the flip-flop to enter a metastable state or capture incorrect data.</p>
+                <p><strong>Why:</strong> Setup time directly reduces your available logic delay budget. The tools subtract this from the clock period before calculating if your combinational path fits. A 0.05 ns setup time might seem small, but at 500 MHz (2 ns period), it consumes 2.5% of your budget.</p>
+                <p><strong>How to find:</strong> In Vivado: look at detailed path reports - the "Destination Clock Path" section shows setup requirement. In Quartus: TimeQuest reports "tSU" in the Data Required Time breakdown. Device datasheets list typical values: Xilinx 7-Series: 0.03-0.05 ns, UltraScale+: 0.02-0.04 ns, Intel Cyclone V: 0.05-0.08 ns. The tool also adds library setup time automatically - check "Cell Delay" rows in timing reports.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="timing-tsetup" value="0.05" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="timing-tuncert">
+            Clock Uncertainty (ns)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Clock Uncertainty / Jitter</h4>
+                <p><strong>What:</strong> Worst-case variation in clock edge timing, combining jitter (random phase noise), skew (spatial variation across the chip), and any user-applied margin. This represents how much earlier or later the clock might arrive compared to ideal.</p>
+                <p><strong>Why:</strong> Real clock edges are not perfectly periodic. Setup analysis uses pessimistic assumptions: the launch clock edge might be late and the capture edge early (or vice versa for hold). Clock uncertainty reduces your effective timing budget just like setup time does. High-jitter sources (recovered clocks from CDR, spread-spectrum clocks) can consume 100-200 ps of margin.</p>
+                <p><strong>How to find:</strong> In Vivado: run <code>report_clock_networks</code> to see system jitter and clock buffer delays. Check the "Clock Uncertainty" section in timing reports - it shows jitter, skew, and <code>set_clock_uncertainty</code> constraints. In Quartus: TimeQuest's "Clock Setup" panel shows total uncertainty. Typical values: on-chip MMCM/PLL: 0.05-0.15 ns, recovered clocks: 0.15-0.3 ns. Add extra margin with <code>set_clock_uncertainty -setup</code> for safety.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="timing-tuncert" value="0.1" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="timing-tclkq">
+            Clock-to-Q (ns)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Clock-to-Q Delay (Tcq / Tcko)</h4>
+                <p><strong>What:</strong> The propagation delay from the active clock edge at the source flip-flop to when its Q output becomes valid and stable. This is an intrinsic property of the flip-flop - after the clock triggers, it takes time for the internal latches to resolve and drive the output.</p>
+                <p><strong>Why:</strong> Clock-to-Q delay is the very first delay in your data path. Your combinational logic timing budget only starts after the source register finishes outputting valid data. Unlike setup time (which squeezes from the end), Tcq eats into your budget from the start. At high frequencies, even 0.2 ns Tcq consumes 10% of a 2 ns period.</p>
+                <p><strong>How to find:</strong> In Vivado: the "Source Clock Path" section of detailed timing reports shows Tcq as "FDRE (Prop_fdre_C_Q)" or similar. In Quartus: look for "tCO" in TimeQuest Data Arrival Time. Device datasheets also list typical Tcq: Xilinx 7-Series: 0.15-0.25 ns, UltraScale+: 0.10-0.18 ns, Intel Cyclone V: 0.15-0.30 ns. Note: timing tools use actual placed cells, so values vary by location and routing.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="timing-tclkq" value="0.2" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="timing-tlut">
+            LUT Delay (ns)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>LUT Propagation Delay (Logic Level Estimate)</h4>
+                <p><strong>What:</strong> Average total delay for one logic level - the sum of LUT propagation delay (input to output) plus typical inter-LUT routing delay. This simplified model helps estimate how many cascaded logic stages will fit in your timing budget.</p>
+                <p><strong>Why:</strong> Real timing paths consist of multiple logic levels (LUTs in series). By dividing your available logic time by the per-level delay, you can estimate maximum logic depth. Critical paths with 8+ levels often need restructuring - either pipelining (adding registers) or logic optimization (wider, shallower circuits).</p>
+                <p><strong>How to find:</strong> Look at representative timing paths in your design after place-and-route. In Vivado: run <code>report_timing -max_paths 100</code> and average the delays per logic level. Pure LUT delay is ~0.03-0.05 ns; routing adds ~0.05-0.15 ns depending on distance and congestion. Conservative estimates: Xilinx 7-Series: 0.10-0.15 ns/level, UltraScale+: 0.08-0.12 ns/level, Intel Cyclone V: 0.12-0.18 ns/level. Carry chains are much faster (~0.01 ns/bit).</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="timing-tlut" value="0.1" min="0" step="any">
+        </div>
+      </div>
+
+      <div class="results" id="timing-results" aria-live="polite">
+        <div class="results-header">
+          <h3>Results</h3>
+          <button class="copy-btn" data-calc="timing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Clock Period
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Clock Period (T)</h4>
+                <p><strong>What:</strong> Time between consecutive rising (or falling) clock edges, calculated as 1/frequency. This is your total timing budget before any overheads are subtracted.</p>
+                <p><strong>Why:</strong> The clock period is the fundamental constraint for all synchronous timing paths. Every register-to-register path must complete within this window. 5 ns = 200 MHz, 2 ns = 500 MHz. Shorter periods demand more pipelining and careful floorplanning.</p>
+                <p><strong>How to interpret:</strong> Compare against typical logic depths for your target frequency. At 500 MHz (2 ns) you have perhaps 1.5 ns after overheads - room for only 10-15 logic levels. If your design has deeper paths, you must add pipeline registers or restructure the logic.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="timing-period" aria-label="Clock period">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Available for Logic
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Available Logic Time</h4>
+                <p><strong>What:</strong> The time remaining for combinational logic (LUTs + routing) after subtracting all fixed overheads: setup time, clock uncertainty, and clock-to-Q delay. This is your actual timing budget for the data path.</p>
+                <p><strong>Why:</strong> This is the number to compare against your actual path delays in timing reports. If a path's data path delay exceeds this value, you have negative slack and a timing violation. Even if positive, paths close to this limit are fragile and may fail with temperature/voltage variation.</p>
+                <p><strong>How to interpret:</strong> Compare to your longest critical path's data delay. In Vivado, <code>report_timing</code> shows "Data Path Delay" separately from clock paths. In Quartus, check "Data Arrival Time" minus source clock delays. If Available for Logic is less than your data path, you need to either reduce logic depth (pipelining) or relax the frequency constraint.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="timing-available" aria-label="Available time for logic">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Est. Logic Levels
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Estimated Logic Levels</h4>
+                <p><strong>What:</strong> Approximate maximum number of LUTs in series that can fit within your available logic time, calculated as Available for Logic divided by the LUT delay estimate.</p>
+                <p><strong>Why:</strong> Logic depth is a key design metric. Knowing your budget helps guide RTL architecture decisions. Deeply nested conditionals, wide muxes, or long adder chains may exceed this limit. Well-pipelined designs typically have 5-8 levels between registers.</p>
+                <p><strong>How to interpret:</strong> Compare to your synthesis reports showing "Logic Levels" per path. In Vivado: <code>report_design_analysis -logic_level_distribution</code>. Paths with more levels than this estimate will likely fail timing. Consider: retiming, pipelining, or using DSP48/BRAM primitives to absorb complex operations. Note: this is a rough estimate - actual delays depend on routing, congestion, and logic structure.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="timing-levels" aria-label="Estimated logic levels">--</span>
+        </div>
+      </div>
+
+      <div class="formula">
+        <h3>
+          Formula
+          <span class="help-wrapper">
+            <span class="help-icon">?</span>
+            <span class="help-tooltip">
+              <h4>Timing Budget Equation</h4>
+              <p><strong>t_period:</strong> Total clock period - your starting budget. Set by your target frequency. This is the maximum time allowed from one clock edge to the next.</p>
+              <p><strong>t_setup:</strong> Destination flip-flop setup requirement. Data must be stable this long before the capturing edge. Subtracts from the end of your timing window.</p>
+              <p><strong>t_uncertainty:</strong> Clock jitter, skew, and margin. Accounts for the fact that clocks are not perfectly aligned. Reduces effective period.</p>
+              <p><strong>t_clk_to_q:</strong> Source flip-flop propagation delay. Time before valid data even starts propagating. Subtracts from the beginning of your timing window.</p>
+              <p><strong>What remains:</strong> t_logic is your actual budget for combinational logic (LUTs, routing, carry chains, DSP primitives). If this is negative, your design cannot meet timing at this frequency - reduce clock speed or add pipeline stages.</p>
+            </span>
+          </span>
+        </h3>
+        <code>t_logic = t_period - t_setup - t_uncertainty - t_clk_to_q</code>
+      </div>
+    </section>
+
+    <!-- Fixed-Point Precision Calculator -->
+    <section id="fixedpoint" class="calculator">
+      <div class="calc-header">
+        <div>
+          <h2>Fixed-Point Precision Calculator</h2>
+          <p class="description">Determine bit widths for fixed-point representation</p>
+        </div>
+        <button class="reset-btn" data-calc="fixedpoint">Reset</button>
+      </div>
+
+      <div class="inputs">
+        <div class="input-group">
+          <label for="fp-min">
+            Min Value
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Minimum Value</h4>
+                <p><strong>What:</strong> The smallest (most negative) value your fixed-point format must represent.</p>
+                <p><strong>Why:</strong> Negative values require signed (two's complement) representation. The magnitude determines integer bits needed. Underestimating causes wrap-around or saturation artifacts.</p>
+                <p><strong>How to find:</strong> Analyze worst-case values. FIR: 1.5-2x overshoot. IIR: 2-4x steady-state. Accumulators: sum of N max samples. Add 3-6 dB headroom (1-2 extra integer bits) for safety.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="fp-min" value="-10" step="any">
+        </div>
+        <div class="input-group">
+          <label for="fp-max">
+            Max Value
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Maximum Value</h4>
+                <p><strong>What:</strong> The largest (most positive) value your fixed-point format must represent.</p>
+                <p><strong>Why:</strong> Determines integer bits needed to prevent overflow. Exceeding the range causes wrap-around or saturation - severe distortion in signal processing.</p>
+                <p><strong>How to find:</strong> Analyze peak gain. FIR: sum of coefficient magnitudes times max input. Accumulators: add log2(N) bits for N samples. Control: model overshoot. Add guard bits - multiply-accumulates grow by log2(N) bits.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="fp-max" value="10" step="any">
+        </div>
+        <div class="input-group">
+          <label for="fp-precision">
+            Required Precision
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Required Precision (LSB Step Size)</h4>
+                <p><strong>What:</strong> The smallest difference between adjacent representable values - your quantization step size and LSB weight.</p>
+                <p><strong>Why:</strong> Determines fractional bits needed. Each additional bit halves the step size. Insufficient precision degrades SNR; for cascaded stages, errors accumulate.</p>
+                <p><strong>How to find:</strong> From SNR: bits = (SNR_dB - 1.76) / 6.02, then precision = 2^(-bits). Typical values: Audio CD (96 dB): 0.00003. Video 8-bit: 0.004. Control: 0.001-0.0001. Sensor data: match ADC resolution.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="fp-precision" value="0.001" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="fp-signed">
+            <input type="checkbox" id="fp-signed" checked>
+            Signed
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Signed vs Unsigned Representation</h4>
+                <p><strong>What:</strong> Signed uses two's complement (MSB is sign bit). Unsigned treats all bits as magnitude, doubling the positive range but allowing only non-negative values.</p>
+                <p><strong>Why:</strong> Most DSP (filters, audio) requires signed. Unsigned suits addresses, counters, and pixel values (0-255). Mixing signed/unsigned in multipliers requires care.</p>
+                <p><strong>How to choose:</strong> Use signed for: AC-coupled signals, bipolar sensors, subtraction. Use unsigned for: inherently non-negative values (pixels, addresses). When in doubt, use signed. Q notation: SQm.n (signed), UQm.n (unsigned).</p>
+              </span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="results" id="fixedpoint-results" aria-live="polite">
+        <div class="results-header">
+          <h3>Results</h3>
+          <button class="copy-btn" data-calc="fixedpoint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Integer Bits
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Integer Bits (Including Sign)</h4>
+                <p><strong>What:</strong> Bits above the binary point (includes sign bit for signed formats). For signed: 1 sign + (N-1) magnitude bits. For unsigned: all N bits are magnitude.</p>
+                <p><strong>Why it matters:</strong> Determines max magnitude before overflow. Signed range: -2^(N-1) to 2^(N-1)-1. Unsigned: 0 to 2^N-1. Too few = overflow. Too many = wasted precision.</p>
+                <p><strong>How to interpret:</strong> Verify Actual Range covers your min/max. DSP48: A=25/27 bits, B=18 bits, accumulator=48 bits. Bit growth: multiply adds widths, accumulate N values adds log2(N) bits.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="fp-int-bits" aria-label="Integer bits">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Fractional Bits
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Fractional Bits</h4>
+                <p><strong>What:</strong> Bits below the binary point. Each bit has weight 2^(-n): bit 1 = 0.5, bit 2 = 0.25, etc. LSB weight = 2^(-frac_bits).</p>
+                <p><strong>Why it matters:</strong> Determines quantization step size and SNR (~6 dB/bit). Each bit doubles precision. Too few bits cause: IIR limit cycles, audio noise, video banding.</p>
+                <p><strong>How to interpret:</strong> Common: 8 bits = 0.004 (video), 10 = 0.001 (control), 15 = 0.00003 (audio). BRAM: round to 9/18/36. DSP48: coefficients 18 bits, data 18-25 bits.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="fp-frac-bits" aria-label="Fractional bits">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Total Width
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Total Bit Width</h4>
+                <p><strong>What:</strong> Integer bits + fractional bits. This is your register and memory width. Sign bit is already included in integer bits (total = int + frac, not int + frac + 1).</p>
+                <p><strong>Why it matters:</strong> Maps to FPGA resources. DSP48E1: 25x18, DSP48E2: 27x18, Intel: 18x18 or 27x27. BRAM: 9/18/36 bits. Wider paths consume more LUTs and routing; power scales with width squared.</p>
+                <p><strong>How to interpret:</strong> Optimal DSP48 widths: 18, 25 (E1), 27 (E2) bits. Wider needs multiple DSPs. BRAM: 18 or 36 uses full primitives. Widths beyond 32-48 stress routing.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="fp-total-bits" aria-label="Total bit width">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Q Notation
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Q Notation (Qm.n / SQm.n / UQm.n)</h4>
+                <p><strong>What:</strong> Industry-standard fixed-point notation. Format: [S/U]Qm.n where m=integer bits (excluding sign), n=fractional bits. Total = m+n+1 (signed) or m+n (unsigned). Example: SQ3.12 = 16 bits.</p>
+                <p><strong>Why it matters:</strong> Universal in DSP literature and IP documentation. Defines binary point, range, and precision unambiguously. Essential for module interfaces.</p>
+                <p><strong>How to interpret:</strong> SQm.n range: -2^m to 2^m-LSB. Common: SQ1.15 (audio), SQ15.16 (32-bit balanced), UQ0.8 (0-1). Multiply: SQa.b x SQc.d = SQ(a+c+1).(b+d) before truncation.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="fp-q-notation" aria-label="Q notation">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Actual Range
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Actual Representable Range</h4>
+                <p><strong>What:</strong> The min/max values this format can actually represent. Signed: [-2^m, 2^m - LSB]. Unsigned: [0, 2^m - LSB].</p>
+                <p><strong>Why it matters:</strong> Usually larger than requested (bit widths are integers). Extra headroom helps intermediate calculations. Exceeding this range causes overflow or saturation.</p>
+                <p><strong>How to interpret:</strong> Verify worst-case values fit with margin. If range is much larger than needed, consider reducing integer bits for more fractional precision.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="fp-actual-range" aria-label="Actual representable range">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">
+            Actual Precision
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Actual Precision (LSB Weight)</h4>
+                <p><strong>What:</strong> Step size between adjacent values = 2^(-frac_bits). This is your LSB weight. Example: 10 bits gives 0.000977.</p>
+                <p><strong>Why it matters:</strong> Must meet your required precision. Each fractional bit adds ~6 dB SNR. Insufficient precision causes limit cycles, noise, and banding.</p>
+                <p><strong>How to interpret:</strong> Should be smaller than Required Precision. Audio: 16-bit = 96 dB, 24-bit = 144 dB. Video: 8-bit standard, 10-bit for HDR. Cascaded operations accumulate error - add guard bits.</p>
+              </span>
+            </span>
+          </span>
+          <span class="result-value" id="fp-actual-precision" aria-label="Actual precision">--</span>
+        </div>
+      </div>
+
+      <div class="formula">
+        <h3>
+          Formula
+          <span class="help-wrapper">
+            <span class="help-icon">?</span>
+            <span class="help-tooltip">
+              <h4>Fixed-Point Bit Calculation Formulas</h4>
+              <p><strong>Integer bits formula:</strong> ceil(log2(max_magnitude)) + sign_bit. Example: magnitude 100 needs ceil(log2(100))=7, plus 1 sign = 8 integer bits.</p>
+              <p><strong>Fractional bits formula:</strong> ceil(-log2(precision)) gives fractional bits. Example: 0.001 needs ceil(9.97) = 10 bits, actual = 0.000977.</p>
+              <p><strong>Practical examples:</strong> SQ1.15: +/-2 range, 0.00003 precision. SQ15.16: +/-32768, 0.000015. UQ8.0: 0-255 integer. Coefficients: SQ1.17 or SQ2.16 for normalized ranges.</p>
+            </span>
+          </span>
+        </h3>
+        <code>int_bits = ceil(log2(max(|min|, |max|))) + sign_bit</code><br>
+        <code>frac_bits = ceil(-log2(precision))</code>
+      </div>
+    </section>
+
+    <!-- PLL Config Calculator -->
+    <section id="pll" class="calculator">
+      <div class="calc-header">
+        <div>
+          <h2>PLL/MMCM Config Calculator</h2>
+          <p class="description">Find valid PLL configurations for target frequency</p>
+        </div>
+        <button class="reset-btn" data-calc="pll">Reset</button>
+      </div>
+
+      <div class="preset-selector">
+        <label for="pll-preset">Device Preset:</label>
+        <select id="pll-preset">
+          <option value="">-- Select Device --</option>
+          <optgroup label="Xilinx/AMD">
+            <option value="xilinx-7series-mmcm">Xilinx 7-Series MMCM</option>
+            <option value="xilinx-7series-pll">Xilinx 7-Series PLL</option>
+            <option value="xilinx-ultrascale-mmcm">Xilinx UltraScale MMCM</option>
+            <option value="xilinx-ultrascale+-mmcm">Xilinx UltraScale+ MMCM</option>
+          </optgroup>
+          <optgroup label="Intel/Altera">
+            <option value="intel-cyclone-v">Intel Cyclone V PLL</option>
+            <option value="intel-cyclone-10">Intel Cyclone 10 PLL</option>
+            <option value="intel-arria-10">Intel Arria 10 PLL</option>
+            <option value="intel-stratix-10">Intel Stratix 10 PLL</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="inputs">
+        <div class="input-group">
+          <label for="pll-fin">
+            Input Frequency (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Input Reference Frequency</h4>
+                <p><strong>What:</strong> Clock frequency driving the PLL/MMCM input.</p>
+                <p><strong>Why:</strong> Multiplied by M, divided by D and O to produce output. Must be within device limits (Xilinx: 10-800 MHz typical, Intel: varies).</p>
+                <p><strong>Find it:</strong> Board schematic oscillator, or upstream clock source.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="pll-fin" value="100" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="pll-fout">
+            Target Output (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Desired Output Frequency</h4>
+                <p><strong>What:</strong> The clock frequency you need to generate.</p>
+                <p><strong>Why:</strong> Calculator finds M/D/O combinations to produce this (or closest achievable).</p>
+                <p><strong>Find it:</strong> Interface specs (DDR, PCIe, LVDS), IP requirements, or your design constraints.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="pll-fout" value="150" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="pll-vco-min">
+            VCO Min (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>VCO Minimum Frequency</h4>
+                <p><strong>What:</strong> Lower bound of the VCO operating range.</p>
+                <p><strong>Why:</strong> VCO below minimum will not lock. Only configurations with f_vco >= this value are shown.</p>
+                <p><strong>Find it:</strong> Datasheet. Xilinx 7-series/UltraScale+: 600 MHz. Intel Cyclone V: 600 MHz, Stratix 10: varies by PLL type.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="pll-vco-min" value="600" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="pll-vco-max">
+            VCO Max (MHz)
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>VCO Maximum Frequency</h4>
+                <p><strong>What:</strong> Upper bound of the VCO operating range.</p>
+                <p><strong>Why:</strong> VCO above maximum will not lock. Configurations are filtered to keep f_vco <= this value. Speed-grade dependent.</p>
+                <p><strong>Find it:</strong> Datasheet. Xilinx 7-series: 1200-1600 MHz, UltraScale+: 1600-2400 MHz. Intel Cyclone V: 1300 MHz, Stratix 10: 1600 MHz. Check your exact speed grade.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="pll-vco-max" value="1200" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label for="pll-m-max">
+            M Max
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Feedback Multiplier Maximum (M)</h4>
+                <p><strong>What:</strong> Maximum value for the feedback multiplier (CLKFBOUT_MULT on Xilinx).</p>
+                <p><strong>Why:</strong> Multiplies input frequency to set VCO: f_vco = f_in x M / D. Higher M means higher VCO.</p>
+                <p><strong>Find it:</strong> Datasheet. Xilinx MMCM: 2-64, PLL: 2-64. Intel Cyclone V: 1-512, Arria 10: 1-160.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="pll-m-max" value="64" min="1" step="1">
+        </div>
+        <div class="input-group">
+          <label for="pll-d-max">
+            D Max
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Input Divider Maximum (D)</h4>
+                <p><strong>What:</strong> Maximum value for input clock divider (DIVCLK_DIVIDE on Xilinx).</p>
+                <p><strong>Why:</strong> Divides input before the multiplier: PFD = f_in / D. Low PFD increases jitter; keep above 10 MHz.</p>
+                <p><strong>Find it:</strong> Datasheet. Xilinx MMCM: 1-106, PLL: 1-56. Intel Cyclone V: 1-512, Arria 10: 1-32.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="pll-d-max" value="10" min="1" step="1">
+        </div>
+        <div class="input-group">
+          <label for="pll-o-max">
+            O Max
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Output Divider Maximum (O)</h4>
+                <p><strong>What:</strong> Maximum value for output clock divider (CLKOUT_DIVIDE on Xilinx).</p>
+                <p><strong>Why:</strong> Divides VCO to produce output: f_out = f_vco / O. Each output can use a different O value.</p>
+                <p><strong>Find it:</strong> Datasheet. Xilinx MMCM: 1-128, PLL: 1-128. Intel Cyclone V: 1-512, Arria 10: 1-512.</p>
+              </span>
+            </span>
+          </label>
+          <input type="number" id="pll-o-max" value="128" min="1" step="1">
+        </div>
+      </div>
+
+      <div class="results" id="pll-results-container" aria-live="polite">
+        <div class="results-header">
+          <h3>
+            Valid Configurations
+            <span class="help-wrapper">
+              <span class="help-icon">?</span>
+              <span class="help-tooltip">
+                <h4>Valid PLL Configurations</h4>
+                <p><strong>M/D/O:</strong> Multiplier, input divider, output divider. Use these in your MMCM/PLL IP or RTL.</p>
+                <p><strong>VCO:</strong> Calculated VCO frequency. Pick values near the middle of your VCO range for lowest jitter.</p>
+                <p><strong>Error:</strong> Frequency error in ppm. Zero means exact match. Results sorted by smallest error.</p>
+                <p><strong>Selecting:</strong> Prefer lower error. When error is similar, choose VCO near center of range. Avoid low PFD (f_in / D &lt; 10 MHz) which increases jitter.</p>
+              </span>
+            </span>
+          </h3>
+          <button class="copy-btn" data-calc="pll">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <div id="pll-results" class="pll-results">
+          <p class="placeholder">Enter values to calculate...</p>
+        </div>
+      </div>
+
+      <div class="formula">
+        <h3>
+          Formula
+          <span class="help-wrapper">
+            <span class="help-icon">?</span>
+            <span class="help-tooltip">
+              <h4>PLL Frequency Equations</h4>
+              <p><strong>f_vco = f_in x M / D:</strong> VCO frequency from multiplied/divided input. Must be within device VCO range for lock.</p>
+              <p><strong>f_out = f_vco / O:</strong> Output divider scales VCO down. Each MMCM/PLL output can use a different O.</p>
+              <p><strong>PFD = f_in / D:</strong> Phase-frequency detector input. Keep above 10 MHz for low jitter (Xilinx recommends 10-450 MHz).</p>
+              <p><strong>Tip:</strong> VCO near center of range gives lowest jitter. Higher VCO with larger O often has lower jitter than lower VCO with smaller O.</p>
+            </span>
+          </span>
+        </h3>
+        <code>f_out = f_in × M / (D × O)</code><br>
+        <code>f_vco = f_in × M / D</code>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p><a href="https://bitwiz.io">bitwiz.io</a></p>
+  </footer>
+
+  <script src="js/presets.js"></script>
+  <script src="js/fifo.js"></script>
+  <script src="js/cdc.js"></script>
+  <script src="js/timing.js"></script>
+  <script src="js/fixedpoint.js"></script>
+  <script src="js/pll.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
