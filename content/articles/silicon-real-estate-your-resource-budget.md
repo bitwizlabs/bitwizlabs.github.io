@@ -4,7 +4,7 @@ date: 2025-12-31T09:13:00Z
 updated: 2026-01-02
 draft: false
 description: "Understanding FPGA resource utilization - LUTs, registers, BRAM, DSPs, and why 94% utilization means your design won't close timing"
-tags: ["FPGA", "resources", "utilization", "timing", "hardware"]
+tags: ["FPGA", "utilization", "timing", "hardware"]
 categories: ["articles"]
 ---
 

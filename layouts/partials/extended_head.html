@@ -1,7 +1,7 @@
 {{/* Tell browsers this site uses a dark color scheme natively */}}
 <meta name="color-scheme" content="dark">
 
-{{/* Add noindex for tag pages, resources, and any page with noindex: true in frontmatter */}}
+{{/* Add noindex for tag pages and any page with noindex: true in frontmatter */}}
 {{ if or (eq .Section "tags") (.Params.noindex) }}
 <meta name="robots" content="noindex, nofollow">
 {{ end }}
