@@ -18,10 +18,10 @@ theme = "hugo-theme-terminal"
   # Site info
   author = "bitwiz"
   description = "Digital logic design & FPGA-accelerated systems"
+  Subtitle = "Digital logic design & FPGA-accelerated systems"
   keywords = "FPGA, digital design, Verilog, SystemVerilog, VHDL, verification, SerDes"
 
-  # Footer
-  footerCopyright = "© 2025 bitwiz"
+  # Footer (omit footerCopyright to use dynamic year from theme)
 
   # Syntax highlighting
   contentTypeName = "articles"

@@ -1,10 +1,7 @@
 {{/* Tell browsers this site uses a dark color scheme natively */}}
 <meta name="color-scheme" content="dark">
 
-{{/* Add noindex for tag pages and any page with noindex: true in frontmatter */}}
-{{ if or (eq .Section "tags") (.Params.noindex) }}
+{{/* Add noindex for taxonomy pages and any page with noindex: true in frontmatter */}}
+{{ if or (eq .Section "tags") (eq .Section "categories") (.Params.noindex) }}
 <meta name="robots" content="noindex, nofollow">
 {{ end }}
-
-{{/* RSS feed autodiscovery */}}
-<link rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" href="{{ "index.xml" | absURL }}">
