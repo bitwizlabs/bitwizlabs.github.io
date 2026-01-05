@@ -1,5 +1,6 @@
 {{/* Tell browsers this site uses a dark color scheme natively */}}
 <meta name="color-scheme" content="dark">
+<link rel="manifest" href="/site.webmanifest">
 
 {{/* Add noindex for taxonomy pages and any page with noindex: true in frontmatter */}}
 {{ if or (eq .Section "tags") (eq .Section "categories") (.Params.noindex) }}
