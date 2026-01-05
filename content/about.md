@@ -1,6 +1,7 @@
 ---
 title: "About"
 description: "About bitwiz"
+date: 2025-01-01
 ---
 
 ## About bitwiz

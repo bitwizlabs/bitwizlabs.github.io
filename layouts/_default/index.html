@@ -1,4 +1,5 @@
 {{ define "main" }}
+  <h1 class="visually-hidden">{{ .Site.Title }} - {{ .Site.Params.Subtitle }}</h1>
   {{ if .Content }}
     <div class="index-content {{ if .Params.framed -}}framed{{- end -}}">
       {{ .Content }}

@@ -51,6 +51,9 @@ jobs:
       - name: Copy CNAME to public
         run: cp CNAME public/CNAME
 
+      - name: Add calc to sitemap
+        run: sed -i 's|</urlset>|<url><loc>https://bitwiz.io/calc/</loc></url></urlset>|' public/sitemap.xml
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
