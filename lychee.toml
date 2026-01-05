@@ -1,0 +1,4 @@
+exclude = [
+  "cdn-cgi/l/email-protection",
+  "mailto:"
+]
