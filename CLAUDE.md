@@ -93,6 +93,10 @@ Use relative links: `/articles/article-slug/`
 - Deployment is automatic via GitHub Actions on push to `main`
 - Use `noindex: true` in frontmatter to exclude pages from search engines
 
+## Git Commits
+
+Do not include "Co-Authored-By: Claude" or similar attribution lines in commit messages.
+
 ## Configuration
 
 Main config in `hugo.toml`:

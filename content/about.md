@@ -19,18 +19,12 @@ My work spans **medical devices**, **big tech infrastructure**, and **custom sil
 - **Verification automation** - Cocotb frameworks, SVA, constrained random
 - **Timing closure** - Clock domain crossings, multicycle paths, physical optimization
 
-### Focus Areas
+### Current Focus
 
-```
-┌─────────────────────────────────────────────┐
-│              Current Focus                   │
-├─────────────────────────────────────────────┤
-│  • DDR4/DDR5 memory subsystems              │
-│  • 100G+ Ethernet implementations           │
-│  • Hardware/software co-verification        │
-│  • Open-source FPGA tooling                 │
-└─────────────────────────────────────────────┘
-```
+- DDR4/DDR5 memory subsystems
+- 100G+ Ethernet implementations
+- Hardware/software co-verification
+- Open-source FPGA tooling
 
 ### Philosophy
 
